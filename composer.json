@@ -1,0 +1,79 @@
+{
+	"name": "syntatis/codex",
+	"description": "Code to build WordPress extensions",
+	"keywords": [
+		"wordpress",
+		"helpers",
+		"functions",
+		"facades",
+		"service-container",
+		"extensions",
+		"framework"
+	],
+	"homepage": "https://github.com/syntatis/codex",
+	"authors": [
+		{
+			"name": "Thoriq Firdaus",
+			"email": "2067467+tfirdaus@users.noreply.github.com",
+			"homepage": "https://github.com/tfirdaus",
+			"role": "Developer"
+		}
+	],
+	"license": "GPL-2.0-or-later",
+	"autoload": {
+		"psr-4": {
+			"Codex\\": "app/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Codex\\Tests\\": [
+				"tests/app/",
+				"tests/phpunit/"
+			]
+		}
+	},
+	"require": {
+		"php": ">=7.4",
+		"adbario/php-dot-notation": "^3.3",
+		"pimple/pimple": "^3.5",
+		"syntatis/utils": "^1.5"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"phpcompatibility/php-compatibility": "^9.3",
+		"phpstan/extension-installer": "^1.4",
+		"phpstan/phpstan": "^1.11",
+		"phpstan/phpstan-phpunit": "^1.4",
+		"phpstan/phpstan-strict-rules": "^1.6",
+		"phpunit/phpunit": "^9.6",
+		"roots/wordpress": "^6.6",
+		"symfony/var-dumper": "^5.4",
+		"syntatis/coding-standard": "^1.4",
+		"szepeviktor/phpstan-wordpress": "^1.3",
+		"wp-phpunit/wp-phpunit": "^6.6",
+		"yoast/phpunit-polyfills": "^2.0"
+	},
+	"scripts": {
+		"phpcs:fix": "vendor/bin/phpcbf",
+		"phpcs": "vendor/bin/phpcs",
+		"phpstan": "vendor/bin/phpstan --memory-limit=512M",
+		"phpunit:coverage": "vendor/bin/phpunit",
+		"phpunit": "vendor/bin/phpunit --no-coverage",
+		"test": [
+			"@phpcs",
+			"@phpstan",
+			"@phpunit"
+		]
+	},
+	"config": {
+		"sort-packages": true,
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"phpstan/extension-installer": true,
+			"roots/wordpress-core-installer": true
+		}
+	},
+	"prefer-stable": true,
+	"minimum-stability": "stable"
+}

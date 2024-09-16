@@ -1,0 +1,38 @@
+# OS generated files #
+######################
+.DS_Store
+Thumbs.db
+
+# Logs and databases #
+######################
+*.sql
+
+# Compiled source #
+###################
+*.tar.gz
+*.zip
+
+# Graphics #
+############
+*.psd
+
+# Dependency #
+##########################
+node_modules/
+vendor/
+composer.lock
+
+# Tests #
+#############
+artifacts/
+phpunit.xml
+coverage.xml
+
+# Temporary #
+#############
+tmp/
+
+# WordPress #
+###########
+wp-cli.local.yml
+wordpress/

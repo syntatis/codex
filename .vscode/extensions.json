@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "bmewburn.vscode-intelephense-client",
+    "editorconfig.editorconfig",
+    "felixfbecker.php-debug",
+    "getpsalm.psalm-vscode-plugin",
+    "johnbillion.vscode-wordpress-hooks",
+    "ms-azuretools.vscode-docker",
+    "neilbrayfield.php-docblocker",
+    "wongjn.php-sniffer",
+    "wordpresstoolbox.wordpress-toolbox",
+    "sanderronde.phpstan-vscode"
+  ]
+}

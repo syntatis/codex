@@ -1,0 +1,13 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "codex/block-a",
+	"version": "1.0.0",
+	"title": "Block A",
+	"category": "widgets",
+	"textdomain": "Codex",
+	"render": "file:./render.php",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./styles.scss",
+	"keywords": []
+}

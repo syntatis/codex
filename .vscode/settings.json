@@ -1,0 +1,10 @@
+{
+  // Auto format PHP using vscode format
+	"files.autoSave": "off",
+	"phpstan.enabled": false,
+  "phpSniffer.autoDetect": true,
+  "phpSniffer.run": "onSave",
+  "[php]": {
+    "editor.defaultFormatter": "wongjn.php-sniffer"
+  },
+}

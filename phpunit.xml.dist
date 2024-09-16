@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+	backupGlobals="false"
+	bootstrap="tests/phpunit/bootstrap.php"
+	cacheResult="true"
+	cacheResultFile="tmp/phpunit/.phpunit.result.cache"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true">
+	<coverage processUncoveredFiles="true">
+		<include>
+			<directory suffix=".php">app/</directory>
+			<directory suffix=".php">inc/</directory>
+		</include>
+		<report>
+			<html outputDirectory="tmp/phpunit/coverage" lowUpperBound="30" highLowerBound="80"/>
+		</report>
+	</coverage>
+	<php>
+		<env name="WP_PHPUNIT__TESTS_CONFIG" value="tests/phpunit/wp-tests-config.php"/>
+		<const name="WP_ENVIRONMENT_TYPE" value="development"/>
+		<const name="WP_TESTS_MULTISITE" value="1"/>
+	</php>
+	<testsuites>
+		<testsuite name="app">
+			<directory suffix="Test.php">tests/app/</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
