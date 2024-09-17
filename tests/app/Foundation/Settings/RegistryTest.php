@@ -118,6 +118,8 @@ class RegistryTest extends WPTestCase
 
 		$registry->deregister();
 
+		do_action('rest_api_init');
+
 		$registeredSettings = get_registered_settings();
 
 		$this->assertArrayNotHasKey('say', $registeredSettings);
