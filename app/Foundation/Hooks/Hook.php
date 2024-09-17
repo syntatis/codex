@@ -143,13 +143,12 @@ final class Hook
 	/**
 	 * Whether the action hook has the specified callback.
 	 *
-	 * @param string          $tag      The name of the action hook to remove the callback from.
-	 * @param string|callable $ref      The callback or ref id to remove from the filter hook.
-	 * @param int             $priority Optional. The priority of the callback function. Default is `10`.
+	 * @param string          $tag The name of the action hook to remove the callback from.
+	 * @param string|callable $ref The callback or ref id to remove from the filter hook.
 	 *
 	 * @return bool|int If registered, it returns the priority of the callback. Otherwise, it returns false.
 	 */
-	public function hasAction(string $tag, $ref, int $priority = 10)
+	public function hasAction(string $tag, $ref)
 	{
 		$callback = $this->getCallback($ref);
 
@@ -157,19 +156,18 @@ final class Hook
 			return false;
 		}
 
-		return has_action($tag, $callback, $priority);
+		return has_action($tag, $callback);
 	}
 
 	/**
 	 * Whether the filter hook has the specified callback.
 	 *
-	 * @param string          $tag      The name of the filter hook to remove the callback from.
-	 * @param string|callable $ref      The callback or ref id to remove from the filter hook.
-	 * @param int             $priority Optional. The priority of the callback function. Default is `10`.
+	 * @param string          $tag The name of the filter hook to remove the callback from.
+	 * @param string|callable $ref The callback or ref id to remove from the filter hook.
 	 *
 	 * @return bool|int If registered, it returns the priority of the callback. Otherwise, it returns false.
 	 */
-	public function hasFilter(string $tag, $ref, int $priority = 10)
+	public function hasFilter(string $tag, $ref)
 	{
 		$callback = $this->getCallback($ref);
 
@@ -177,7 +175,7 @@ final class Hook
 			return false;
 		}
 
-		return has_filter($tag, $callback, $priority);
+		return has_filter($tag, $callback);
 	}
 
 	/**
