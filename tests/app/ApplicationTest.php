@@ -18,6 +18,7 @@ use Codex\Foundation\Assets\Assets;
 use Codex\Foundation\Assets\Enqueue;
 use Codex\Foundation\Assets\Script;
 use Codex\Foundation\Assets\Style;
+use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry as SettingsRegistry;
 use Codex\Foundation\Settings\Support\SettingRegistrar;
@@ -27,9 +28,11 @@ use InvalidArgumentException;
 use Pimple\Container;
 use Psr\Container\ContainerInterface;
 use ReflectionFunction;
+use ReflectionMethod;
 use stdClass;
 
 use function array_key_exists;
+use function array_key_last;
 use function array_values;
 use function get_class;
 
@@ -312,11 +315,10 @@ class ApplicationTest extends WPTestCase
 
 		self::assertSame(10, $hook->hasAction('init', '@app.blocks.register'));
 
-		// Public.
-		$closure = array_values($GLOBALS['wp_filter']['init'][10])[0]['function'];
-		$class = (new ReflectionFunction($closure))->getClosureScopeClass();
+		$filters = array_values($GLOBALS['wp_filter']['init'][10]);
+		$function = $filters[array_key_last($filters)]['function'];
 
-		self::assertSame(Application::class, $class->getName());
+		self::assertSame(Blocks::class, get_class($function[0]));
 	}
 
 	public function testServiceProvider(): void
