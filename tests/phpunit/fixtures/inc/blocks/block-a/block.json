@@ -8,6 +8,6 @@
 	"textdomain": "codex",
 	"render": "file:./render.php",
 	"editorScript": "file:./index.js",
-	"editorStyle": "file:./styles.scss",
+	"editorStyle": "file:./styles.css",
 	"keywords": []
 }
