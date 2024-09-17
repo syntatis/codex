@@ -425,6 +425,56 @@ class HookTest extends WPTestCase
 		$this->assertFalse(has_filter('the_content', $func));
 		$this->assertFalse(has_filter('all_plugins', $func));
 	}
+
+	public function testHasAction(): void
+	{
+		$func1 = static function ($value): void {
+		};
+		$func2 = static function ($value): void {
+		};
+
+		$this->hook->addAction('wp', $func1, 11);
+
+		$this->assertSame(11, $this->hook->hasAction('wp', $func1));
+		$this->assertFalse($this->hook->hasAction('wp', $func2));
+	}
+
+	/** @group with-ref */
+	public function testHasActionWithRef(): void
+	{
+		$func = static function ($value): void {
+		};
+
+		$this->hook->addAction('wp', $func, 12, 1, ['id' => 'wp.func']);
+
+		$this->assertSame(12, $this->hook->hasAction('wp', '@wp.func'));
+		$this->assertFalse($this->hook->hasAction('wp', '@wp.function'));
+	}
+
+	public function testHasFilter(): void
+	{
+		$func1 = static function ($value): void {
+		};
+		$func2 = static function ($value): void {
+		};
+
+		$this->hook->addFilter('the_content', $func1, 11);
+
+		$this->assertSame(11, $this->hook->hasFilter('the_content', $func1));
+		$this->assertFalse($this->hook->hasFilter('the_content', $func2));
+	}
+
+	/** @group with-ref */
+	public function testHasFilterWithRef(): void
+	{
+		$func = static function ($value): void {
+		};
+
+		$this->hook->addFilter('the_content', $func, 12, 1, ['id' => 'the-content.func']);
+
+		$this->assertSame(12, $this->hook->hasFilter('the_content', '@the-content.func'));
+		$this->assertFalse($this->hook->hasFilter('the_content', '@the-content.function'));
+	}
 }
 
 // phpcs:disable

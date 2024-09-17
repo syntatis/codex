@@ -113,7 +113,7 @@ final class Hook
 	 */
 	public function removeAction(string $tag, $ref, int $priority = 10): void
 	{
-		$callback = is_string($ref) ? $this->getCallbackFromId($ref) : $ref;
+		$callback = is_string($ref) ? $this->getCallback($ref) : $ref;
 
 		if (! is_callable($callback)) {
 			return;
@@ -131,13 +131,53 @@ final class Hook
 	 */
 	public function removeFilter(string $tag, $ref, int $priority = 10): void
 	{
-		$callback = is_string($ref) ? $this->getCallbackFromId($ref) : $ref;
+		$callback = $this->getCallback($ref);
 
 		if (! is_callable($callback)) {
 			return;
 		}
 
 		remove_filter($tag, $callback, $priority);
+	}
+
+	/**
+	 * Whether the action hook has the specified callback.
+	 *
+	 * @param string          $tag      The name of the action hook to remove the callback from.
+	 * @param string|callable $ref      The callback or ref id to remove from the filter hook.
+	 * @param int             $priority Optional. The priority of the callback function. Default is `10`.
+	 *
+	 * @return bool|int If registered, it returns the priority of the callback. Otherwise, it returns false.
+	 */
+	public function hasAction(string $tag, $ref, int $priority = 10)
+	{
+		$callback = $this->getCallback($ref);
+
+		if (! is_callable($callback)) {
+			return false;
+		}
+
+		return has_action($tag, $callback, $priority);
+	}
+
+	/**
+	 * Whether the filter hook has the specified callback.
+	 *
+	 * @param string          $tag      The name of the filter hook to remove the callback from.
+	 * @param string|callable $ref      The callback or ref id to remove from the filter hook.
+	 * @param int             $priority Optional. The priority of the callback function. Default is `10`.
+	 *
+	 * @return bool|int If registered, it returns the priority of the callback. Otherwise, it returns false.
+	 */
+	public function hasFilter(string $tag, $ref, int $priority = 10)
+	{
+		$callback = $this->getCallback($ref);
+
+		if (! is_callable($callback)) {
+			return false;
+		}
+
+		return has_filter($tag, $callback, $priority);
 	}
 
 	/**
@@ -239,15 +279,21 @@ final class Hook
 		return spl_object_hash(Closure::fromCallable($callback));
 	}
 
-	/** @param string $id The callback or ref to remove from the action hook. */
-	private function getCallbackFromId(string $id): ?callable
+	/** @param string|callable $ref The callback or ref to remove from the action hook. */
+	private function getCallback($ref): ?callable
 	{
-		if (isset($this->aliases[$id])) {
-			return $this->refs[$this->aliases[$id]]['callback'];
+		if (is_string($ref)) {
+			if (isset($this->aliases[$ref])) {
+				return $this->refs[$this->aliases[$ref]]['callback'];
+			}
+
+			if (isset($this->refs[$ref])) {
+				return $this->refs[$ref]['callback'];
+			}
 		}
 
-		if (isset($this->refs[$id])) {
-			return $this->refs[$id]['callback'];
+		if (is_callable($ref)) {
+			return $ref;
 		}
 
 		return null;

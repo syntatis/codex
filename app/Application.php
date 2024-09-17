@@ -19,6 +19,7 @@ use Codex\Core\Config;
 use Codex\Foundation\Assets\Enqueue;
 use Codex\Foundation\Assets\Script;
 use Codex\Foundation\Assets\Style;
+use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry;
 use InvalidArgumentException;
@@ -142,7 +143,12 @@ final class Application
 			$blocksPath = wp_normalize_path($blocksPath);
 
 			if (is_dir($blocksPath)) {
-				$this->hook->addAction('init', fn () => $this->registerBlocks($blocksPath));
+				$blocks = new Blocks($blocksPath);
+
+				/**
+				 * Register the blocks found in the specificed blocks directory.
+				 */
+				$this->hook->addAction('init', [$blocks, 'register'], 10, 1, ['id' => 'app.blocks.register']);
 			}
 		}
 
@@ -208,6 +214,7 @@ final class Application
 
 	private function registerCoreServices(): void
 	{
+		$this->pimple['hook'] = $this->hook;
 		$this->pimple['config'] = function (): Config {
 			$config = [];
 			$configDir = dirname($this->pluginFilePath) . '/inc/config';
@@ -234,6 +241,8 @@ final class Application
 
 			return new Config($config);
 		};
+
+		$this->pimple['app.plugin_file_path'] = $this->pluginFilePath;
 		$this->pimple['app'] = static function (PimpleContainer $container): App {
 			/** @var Config $config */
 			$config = $container['config'];
@@ -249,7 +258,6 @@ final class Application
 
 			return new App($name, $settings);
 		};
-		$this->pimple['app.plugin_file_path'] = $this->pluginFilePath;
 	}
 
 	private function bootEnqueueables(object $instance, Enqueue $enqueue): void
@@ -306,21 +314,5 @@ final class Application
 
 		$enqueue->scripts();
 		$enqueue->styles();
-	}
-
-	private function registerBlocks(string $blocksPath): void
-	{
-		$blocks = new RecursiveDirectoryIterator(
-			$blocksPath,
-			RecursiveDirectoryIterator::SKIP_DOTS,
-		);
-
-		foreach ($blocks as $block) {
-			if (! ($block instanceof SplFileInfo) || ! $block->isDir()) {
-				continue;
-			}
-
-			register_block_type($block->getRealPath());
-		}
 	}
 }

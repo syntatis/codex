@@ -27,7 +27,6 @@ use Pimple\Container;
 use Psr\Container\ContainerInterface;
 use ReflectionFunction;
 use stdClass;
-use WP_Block_Type_Registry;
 
 use function array_key_exists;
 use function array_values;
@@ -286,7 +285,7 @@ class ApplicationTest extends WPTestCase
 		self::assertTrue(isset($GLOBALS['wp_filter']['deactivate_' . plugin_basename(self::getFixturesPath('/plugin-name.php'))]));
 	}
 
-	public function testBlocks(): void
+	public function testBlocksRegisterHook(): void
 	{
 		$app = new Application(
 			new class () implements Extendable {
@@ -307,13 +306,10 @@ class ApplicationTest extends WPTestCase
 		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
 		$app->boot();
 
-		do_action('init');
+		/** @var Hook $hook */
+		$hook = $app->getContainer()->get('hook');
 
-		$blocks = WP_Block_Type_Registry::get_instance()->get_all_registered();
-
-		self::assertTrue(isset($blocks['codex/block-a']));
-		self::assertTrue(isset($blocks['codex/block-b']));
-		self::assertFalse(isset($blocks['codex/block-c']));
+		self::assertSame(10, $hook->hasAction('init', '@app.blocks.register'));
 	}
 
 	public function testServiceProvider(): void
