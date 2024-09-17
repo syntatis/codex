@@ -39,7 +39,9 @@
 				"wongjn.php-sniffer",
 				"wordpresstoolbox.wordpress-toolbox",
 				"SanderRonde.phpstan-vscode",
-				"xdebug.php-debug"
+				"xdebug.php-debug",
+				"christian-kohler.path-intellisense",
+				"VisualStudioExptTeam.vscodeintellicode"
 			]
 		}
 	}
