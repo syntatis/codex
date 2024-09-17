@@ -14,6 +14,7 @@ use Codex\Contracts\HasAdminScripts;
 use Codex\Contracts\HasPublicScripts;
 use Codex\Contracts\Hookable;
 use Codex\Core\Config;
+use Codex\Foundation\Assets\Assets;
 use Codex\Foundation\Assets\Enqueue;
 use Codex\Foundation\Assets\Script;
 use Codex\Foundation\Assets\Style;
@@ -310,6 +311,12 @@ class ApplicationTest extends WPTestCase
 		$hook = $app->getContainer()->get('hook');
 
 		self::assertSame(10, $hook->hasAction('init', '@app.blocks.register'));
+
+		// Public.
+		$closure = array_values($GLOBALS['wp_filter']['init'][10])[0]['function'];
+		$class = (new ReflectionFunction($closure))->getClosureScopeClass();
+
+		self::assertSame(Application::class, $class->getName());
 	}
 
 	public function testServiceProvider(): void
@@ -374,13 +381,13 @@ class ApplicationTest extends WPTestCase
 		$closure = array_values($GLOBALS['wp_filter']['admin_enqueue_scripts'][12])[0]['function'];
 		$class = (new ReflectionFunction($closure))->getClosureScopeClass();
 
-		self::assertSame(Application::class, $class->getName());
+		self::assertSame(Assets::class, $class->getName());
 
 		// Public.
 		$closure = array_values($GLOBALS['wp_filter']['wp_enqueue_scripts'][12])[0]['function'];
 		$class = (new ReflectionFunction($closure))->getClosureScopeClass();
 
-		self::assertSame(Application::class, $class->getName());
+		self::assertSame(Assets::class, $class->getName());
 	}
 
 	public function testBoot(): void
