@@ -1,4 +1,4 @@
-name: wp
+name: ci
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/wp.yml"
+      - ".github/workflows/ci.yml"
       - "**.php"
       - "composer.json"
       - "phpcs.xml.dist"
@@ -17,7 +17,7 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/wp.yml"
+      - ".github/workflows/ci.yml"
       - "**.php"
       - "composer.json"
       - "phpcs.xml.dist"
