@@ -28,7 +28,6 @@ use InvalidArgumentException;
 use Pimple\Container;
 use Psr\Container\ContainerInterface;
 use ReflectionFunction;
-use ReflectionMethod;
 use stdClass;
 
 use function array_key_exists;
