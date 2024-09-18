@@ -14,9 +14,11 @@ use Codex\Contracts\HasAdminScripts;
 use Codex\Contracts\HasPublicScripts;
 use Codex\Contracts\Hookable;
 use Codex\Core\Config;
+use Codex\Foundation\Assets\Assets;
 use Codex\Foundation\Assets\Enqueue;
 use Codex\Foundation\Assets\Script;
 use Codex\Foundation\Assets\Style;
+use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry as SettingsRegistry;
 use Codex\Foundation\Settings\Support\SettingRegistrar;
@@ -27,9 +29,9 @@ use Pimple\Container;
 use Psr\Container\ContainerInterface;
 use ReflectionFunction;
 use stdClass;
-use WP_Block_Type_Registry;
 
 use function array_key_exists;
+use function array_key_last;
 use function array_values;
 use function get_class;
 
@@ -286,7 +288,7 @@ class ApplicationTest extends WPTestCase
 		self::assertTrue(isset($GLOBALS['wp_filter']['deactivate_' . plugin_basename(self::getFixturesPath('/plugin-name.php'))]));
 	}
 
-	public function testBlocks(): void
+	public function testBlocksRegisterHook(): void
 	{
 		$app = new Application(
 			new class () implements Extendable {
@@ -307,13 +309,15 @@ class ApplicationTest extends WPTestCase
 		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
 		$app->boot();
 
-		do_action('init');
+		/** @var Hook $hook */
+		$hook = $app->getContainer()->get('hook');
 
-		$blocks = WP_Block_Type_Registry::get_instance()->get_all_registered();
+		self::assertSame(10, $hook->hasAction('init', '@app.blocks.register'));
 
-		self::assertTrue(isset($blocks['codex/block-a']));
-		self::assertTrue(isset($blocks['codex/block-b']));
-		self::assertFalse(isset($blocks['codex/block-c']));
+		$filters = array_values($GLOBALS['wp_filter']['init'][10]);
+		$function = $filters[array_key_last($filters)]['function'];
+
+		self::assertSame(Blocks::class, get_class($function[0]));
 	}
 
 	public function testServiceProvider(): void
@@ -378,13 +382,13 @@ class ApplicationTest extends WPTestCase
 		$closure = array_values($GLOBALS['wp_filter']['admin_enqueue_scripts'][12])[0]['function'];
 		$class = (new ReflectionFunction($closure))->getClosureScopeClass();
 
-		self::assertSame(Application::class, $class->getName());
+		self::assertSame(Assets::class, $class->getName());
 
 		// Public.
 		$closure = array_values($GLOBALS['wp_filter']['wp_enqueue_scripts'][12])[0]['function'];
 		$class = (new ReflectionFunction($closure))->getClosureScopeClass();
 
-		self::assertSame(Application::class, $class->getName());
+		self::assertSame(Assets::class, $class->getName());
 	}
 
 	public function testBoot(): void

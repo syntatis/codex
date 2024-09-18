@@ -9,16 +9,15 @@ use Codex\Abstracts\ServiceProvider;
 use Codex\Contracts\Activatable;
 use Codex\Contracts\Bootable;
 use Codex\Contracts\Deactivatable;
-use Codex\Contracts\Enqueueable;
 use Codex\Contracts\Extendable;
 use Codex\Contracts\HasAdminScripts;
 use Codex\Contracts\HasPublicScripts;
 use Codex\Contracts\Hookable;
 use Codex\Core\App;
 use Codex\Core\Config;
+use Codex\Foundation\Assets\Assets;
 use Codex\Foundation\Assets\Enqueue;
-use Codex\Foundation\Assets\Script;
-use Codex\Foundation\Assets\Style;
+use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry;
 use InvalidArgumentException;
@@ -32,7 +31,6 @@ use Syntatis\Utils\Val;
 use function dirname;
 use function is_dir;
 use function is_file;
-use function is_iterable;
 use function is_string;
 use function is_subclass_of;
 
@@ -142,7 +140,12 @@ final class Application
 			$blocksPath = wp_normalize_path($blocksPath);
 
 			if (is_dir($blocksPath)) {
-				$this->hook->addAction('init', fn () => $this->registerBlocks($blocksPath));
+				$blocks = new Blocks($blocksPath);
+
+				/**
+				 * Register the blocks found in the specificed blocks directory.
+				 */
+				$this->hook->addAction('init', [$blocks, 'register'], 10, 1, ['id' => 'app.blocks.register']);
 			}
 		}
 
@@ -192,10 +195,13 @@ final class Application
 			}
 
 			if ($this->container->has('enqueue')) {
-				/** @var Enqueue $enqueue */
 				$enqueue = $this->container->get('enqueue');
 
-				$this->bootEnqueueables($instance, $enqueue);
+				if ($enqueue instanceof Enqueue && ($instance instanceof HasAdminScripts || $instance instanceof HasPublicScripts)) {
+					$assets = new Assets($enqueue);
+					$assets->hook($this->hook);
+					$assets->enqueue($instance);
+				}
 			}
 
 			if (! ($instance instanceof Bootable)) {
@@ -208,6 +214,7 @@ final class Application
 
 	private function registerCoreServices(): void
 	{
+		$this->pimple['hook'] = $this->hook;
 		$this->pimple['config'] = function (): Config {
 			$config = [];
 			$configDir = dirname($this->pluginFilePath) . '/inc/config';
@@ -234,6 +241,8 @@ final class Application
 
 			return new Config($config);
 		};
+
+		$this->pimple['app.plugin_file_path'] = $this->pluginFilePath;
 		$this->pimple['app'] = static function (PimpleContainer $container): App {
 			/** @var Config $config */
 			$config = $container['config'];
@@ -249,78 +258,5 @@ final class Application
 
 			return new App($name, $settings);
 		};
-		$this->pimple['app.plugin_file_path'] = $this->pluginFilePath;
-	}
-
-	private function bootEnqueueables(object $instance, Enqueue $enqueue): void
-	{
-		if ($instance instanceof HasAdminScripts) {
-			$this->hook->addAction(
-				'admin_enqueue_scripts',
-				function (string $admin) use ($instance, $enqueue): void {
-					$scripts = $instance->getAdminScripts($admin);
-
-					if (! is_iterable($scripts)) {
-						return;
-					}
-
-					$this->enqueueScripts($scripts, $enqueue);
-				},
-				12,
-			);
-		}
-
-		if (! ($instance instanceof HasPublicScripts)) {
-			return;
-		}
-
-		$this->hook->addAction(
-			'wp_enqueue_scripts',
-			function () use ($instance, $enqueue): void {
-				$scripts = $instance->getPublicScripts();
-
-				if (! is_iterable($scripts)) {
-					return;
-				}
-
-				$this->enqueueScripts($scripts, $enqueue);
-			},
-			12,
-		);
-	}
-
-	/** @param iterable<Enqueueable> $assets */
-	private function enqueueScripts(iterable $assets, Enqueue $enqueue): void
-	{
-		foreach ($assets as $asset) {
-			if ($asset instanceof Script) {
-				$enqueue->addScripts($asset);
-			}
-
-			if (! ($asset instanceof Style)) {
-				continue;
-			}
-
-			$enqueue->addStyles($asset);
-		}
-
-		$enqueue->scripts();
-		$enqueue->styles();
-	}
-
-	private function registerBlocks(string $blocksPath): void
-	{
-		$blocks = new RecursiveDirectoryIterator(
-			$blocksPath,
-			RecursiveDirectoryIterator::SKIP_DOTS,
-		);
-
-		foreach ($blocks as $block) {
-			if (! ($block instanceof SplFileInfo) || ! $block->isDir()) {
-				continue;
-			}
-
-			register_block_type($block->getRealPath());
-		}
 	}
 }

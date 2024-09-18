@@ -11,6 +11,7 @@ use Codex\Tests\WPTestCase;
 use InvalidArgumentException;
 
 use function trim;
+use function version_compare;
 
 class RegistryTest extends WPTestCase
 {
@@ -87,26 +88,37 @@ class RegistryTest extends WPTestCase
 
 		$this->assertArrayHasKey('say', $registeredSettings);
 		$this->assertSame('string', $registeredSettings['say']['type']);
-		$this->assertSame('Say', $registeredSettings['say']['label']);
 		$this->assertSame('', $registeredSettings['say']['description']);
 		$this->assertTrue($registeredSettings['say']['show_in_rest']);
 
+		if (version_compare($GLOBALS['wp_version'], '6.6', '>=')) {
+			$this->assertSame('Say', $registeredSettings['say']['label']);
+		}
+
 		$this->assertArrayHasKey('count', $registeredSettings);
 		$this->assertSame('integer', $registeredSettings['count']['type']);
-		$this->assertSame('', $registeredSettings['count']['label']);
 		$this->assertSame('How many time?', $registeredSettings['count']['description']);
 		$this->assertTrue($registeredSettings['count']['show_in_rest']);
 
+		if (version_compare($GLOBALS['wp_version'], '6.6', '>=')) {
+			$this->assertSame('', $registeredSettings['count']['label']);
+		}
+
 		$this->assertArrayHasKey('list', $registeredSettings);
 		$this->assertSame('array', $registeredSettings['list']['type']);
-		$this->assertSame('', $registeredSettings['list']['label']);
 		$this->assertSame('', $registeredSettings['list']['description']);
 		$this->assertEquals([
 			'name' => 'list',
 			'schema' => ['items' => ['type' => 'string']],
 		], $registeredSettings['list']['show_in_rest']);
 
+		if (version_compare($GLOBALS['wp_version'], '6.6', '>=')) {
+			$this->assertSame('', $registeredSettings['list']['label']);
+		}
+
 		$registry->deregister();
+
+		do_action('rest_api_init');
 
 		$registeredSettings = get_registered_settings();
 
