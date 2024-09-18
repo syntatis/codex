@@ -140,6 +140,7 @@ jobs:
           WP_ENVIRONMENT_TYPE: development
 
       - name: Upload coverage to Codecov
+        if: ${{ matrix.php != '8.4' }}
         uses: codecov/codecov-action@v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
