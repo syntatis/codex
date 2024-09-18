@@ -1,6 +1,6 @@
 <div align="center">
   <p align="center">
-		<img src="https://raw.githubusercontent.com/syntatis/codex/main/art/codex%402x.png" width="100%" height="auto" alt="Codex." />
+		<img src="https://github.com/syntatis/codex/blob/main/art/codex-cover%402x.png" width="100%" height="auto" alt="Codex." />
   </p>
 </div>
 
