@@ -78,11 +78,6 @@ class SettingRegistrar implements Hookable
 
 			$inputValidator->validate($newValue);
 		};
-		$this->callbacks['init'] = fn () => register_setting(
-			$this->group,
-			$this->name,
-			$this->setting->getSettingArgs(),
-		);
 
 		$this->hook->addFilter(
 			'default_option_' . $this->name,
@@ -107,6 +102,12 @@ class SettingRegistrar implements Hookable
 			3,
 		);
 
+		$this->callbacks['init'] = fn () => register_setting(
+			$this->group,
+			$this->name,
+			$this->setting->getSettingArgs(),
+		);
+
 		$this->hook->addAction(
 			'admin_init',
 			$this->callbacks['init'],
@@ -122,8 +123,6 @@ class SettingRegistrar implements Hookable
 
 	public function deregister(bool $delete = false): void
 	{
-		unregister_setting($this->group, $this->name);
-
 		if (isset($this->callbacks['default_option'])) {
 			$this->hook->removeAction(
 				'default_option_' . $this->name,
@@ -151,6 +150,11 @@ class SettingRegistrar implements Hookable
 		if (isset($this->callbacks['init'])) {
 			$this->hook->removeAction('admin_init', $this->callbacks['init'], $this->priority);
 			$this->hook->removeAction('rest_api_init', $this->callbacks['init'], $this->priority);
+
+			$init = fn () => unregister_setting($this->group, $this->name);
+
+			$this->hook->addAction('admin_init', $init, $this->priority);
+			$this->hook->addAction('rest_api_init', $init, $this->priority);
 		}
 
 		if ($delete !== true) {
