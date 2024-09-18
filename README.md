@@ -1,8 +1,4 @@
-<div align="center">
-  <p align="center">
-		<img src="https://github.com/syntatis/codex/blob/main/art/codex-cover%402x.png" width="100%" height="auto" alt="Codex." />
-  </p>
-</div>
+# 🪵 codex
 
 > [!CAUTION]
 > This package is currently under active development. It is not recommended for production use.
