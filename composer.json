@@ -1,6 +1,6 @@
 {
 	"name": "syntatis/codex",
-	"description": "Code to build WordPress extensions",
+	"description": "Codebase for WordPress extensions",
 	"keywords": [
 		"wordpress",
 		"helpers",
