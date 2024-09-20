@@ -10,12 +10,8 @@ use Codex\Contracts\Activatable;
 use Codex\Contracts\Bootable;
 use Codex\Contracts\Deactivatable;
 use Codex\Contracts\Extendable;
-use Codex\Contracts\HasAdminScripts;
-use Codex\Contracts\HasPublicScripts;
 use Codex\Contracts\Hookable;
 use Codex\Core\Config;
-use Codex\Foundation\Assets\Script;
-use Codex\Foundation\Assets\Style;
 use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry as SettingsRegistry;
@@ -416,21 +412,5 @@ class Overture implements Hookable, Bootable
 	public function boot(): void
 	{
 		$GLOBALS[self::class] = 1;
-	}
-}
-
-class Opera implements HasAdminScripts
-{
-	public function getAdminScripts(string $adminPage): ?iterable
-	{
-		yield new Script('/admin.js');
-	}
-}
-
-class OperaPublic implements HasPublicScripts
-{
-	public function getPublicScripts(): ?iterable
-	{
-		yield new Style('/public.js');
 	}
 }
