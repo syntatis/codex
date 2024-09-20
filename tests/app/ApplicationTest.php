@@ -14,20 +14,16 @@ use Codex\Contracts\HasAdminScripts;
 use Codex\Contracts\HasPublicScripts;
 use Codex\Contracts\Hookable;
 use Codex\Core\Config;
-use Codex\Foundation\Assets\Assets;
-use Codex\Foundation\Assets\Enqueue;
 use Codex\Foundation\Assets\Script;
 use Codex\Foundation\Assets\Style;
 use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry as SettingsRegistry;
 use Codex\Foundation\Settings\Support\SettingRegistrar;
-use Codex\Providers\EnqueueProvider;
 use Codex\Providers\SettingsProvider;
 use InvalidArgumentException;
 use Pimple\Container;
 use Psr\Container\ContainerInterface;
-use ReflectionFunction;
 use stdClass;
 
 use function array_key_exists;
@@ -227,23 +223,6 @@ class ApplicationTest extends WPTestCase
 		$this->assertTrue(update_option('wp_test_foo', ''));
 	}
 
-	public function testEnqueueService(): void
-	{
-		$app = new Application(
-			new class () implements Extendable {
-				public function getInstances(ContainerInterface $container): iterable
-				{
-					return [];
-				}
-			},
-		);
-		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
-		$app->addServices([EnqueueProvider::class]);
-		$app->boot();
-
-		self::assertInstanceOf(Enqueue::class, $app->getContainer()->get('enqueue'));
-	}
-
 	public function testActivatable(): void
 	{
 		$app = new Application(
@@ -361,34 +340,6 @@ class ApplicationTest extends WPTestCase
 
 		self::assertSame(123, has_action('wp_loaded', '__return_null'));
 		self::assertSame(1, $GLOBALS[Overture::class]);
-	}
-
-	public function testEnqueue(): void
-	{
-		$app = new Application(
-			new class () implements Extendable {
-				public function getInstances(ContainerInterface $container): iterable
-				{
-					yield new Opera();
-					yield new OperaPublic();
-				}
-			},
-		);
-		$app->addServices([EnqueueProvider::class]);
-		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
-		$app->boot();
-
-		// Admin.
-		$closure = array_values($GLOBALS['wp_filter']['admin_enqueue_scripts'][12])[0]['function'];
-		$class = (new ReflectionFunction($closure))->getClosureScopeClass();
-
-		self::assertSame(Assets::class, $class->getName());
-
-		// Public.
-		$closure = array_values($GLOBALS['wp_filter']['wp_enqueue_scripts'][12])[0]['function'];
-		$class = (new ReflectionFunction($closure))->getClosureScopeClass();
-
-		self::assertSame(Assets::class, $class->getName());
 	}
 
 	public function testBoot(): void

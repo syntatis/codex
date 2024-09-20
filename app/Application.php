@@ -10,13 +10,9 @@ use Codex\Contracts\Activatable;
 use Codex\Contracts\Bootable;
 use Codex\Contracts\Deactivatable;
 use Codex\Contracts\Extendable;
-use Codex\Contracts\HasAdminScripts;
-use Codex\Contracts\HasPublicScripts;
 use Codex\Contracts\Hookable;
 use Codex\Core\App;
 use Codex\Core\Config;
-use Codex\Foundation\Assets\Assets;
-use Codex\Foundation\Assets\Enqueue;
 use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry;
@@ -192,16 +188,6 @@ final class Application
 		foreach ($this->app->getInstances($this->getContainer()) as $instance) {
 			if ($instance instanceof Hookable) {
 				$instance->hook($this->hook);
-			}
-
-			if ($this->container->has('enqueue')) {
-				$enqueue = $this->container->get('enqueue');
-
-				if ($enqueue instanceof Enqueue && ($instance instanceof HasAdminScripts || $instance instanceof HasPublicScripts)) {
-					$assets = new Assets($enqueue);
-					$assets->hook($this->hook);
-					$assets->enqueue($instance);
-				}
 			}
 
 			if (! ($instance instanceof Bootable)) {
