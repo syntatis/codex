@@ -7,7 +7,10 @@ namespace Codex\Facades;
 use Codex\Abstracts\Facade;
 use Codex\Foundation\Settings\Registry;
 
-/** @method static array<string,Registry>|Registry|null settings(?string $group = null) Retrieve the setting registry collection. */
+/**
+ * @method static name string Retrieve the application name.
+ * @method static array<string,Registry>|Registry|null settings(?string $group = null) Retrieve the setting registry collection.
+ */
 final class App extends Facade
 {
 	protected static function getFacadeAccessor(): string
