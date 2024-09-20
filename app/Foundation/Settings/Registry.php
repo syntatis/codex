@@ -68,6 +68,11 @@ class Registry implements Hookable
 		return count($this->registered) === count($this->settings);
 	}
 
+	public function getSettingGroup(): string
+	{
+		return $this->settingGroup;
+	}
+
 	/** @return array<string,SettingRegistrar> */
 	public function getRegistered(): array
 	{

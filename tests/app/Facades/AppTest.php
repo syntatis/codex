@@ -17,6 +17,27 @@ use function array_key_exists;
 
 class AppTest extends WPTestCase
 {
+	public function testName(): void
+	{
+		$app = new Application(
+			new class () implements Extendable {
+				public function getInstances(ContainerInterface $container): iterable
+				{
+					return [];
+				}
+
+				public function init(): void
+				{
+				}
+			},
+		);
+		$app->addServices([SettingsProvider::class]);
+		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
+		$app->boot();
+
+		$this->assertSame('wp-test', App::name());
+	}
+
 	public function testSettings(): void
 	{
 		$app = new Application(
@@ -49,5 +70,10 @@ class AppTest extends WPTestCase
 		// wp-test/plugin-name-2
 		$this->assertInstanceOf(Registry::class, $settings['wp-test/plugin-name-2']);
 		$this->assertTrue($settings['wp-test/plugin-name-2']->isRegistered());
+
+		$setting = App::settings('plugin-name-2');
+
+		$this->assertInstanceOf(Registry::class, $setting);
+		$this->assertSame('wp-test/plugin-name-2', $setting->getSettingGroup());
 	}
 }

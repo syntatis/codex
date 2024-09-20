@@ -30,6 +30,8 @@ final class App
 	public function settings(?string $group = null)
 	{
 		if (! Val::isBlank($group)) {
+			$group = $this->name . '/' . $group;
+
 			return $this->settingRegistries[$group] ?? null;
 		}
 
