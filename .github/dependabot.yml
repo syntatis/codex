@@ -14,7 +14,9 @@ updates:
       day: "sunday"
     ignore:
       - dependency-name: "symfony/*"
-        update-types: ["version-update:semver-major"]
+        versions: [">5.0"]
+      - dependency-name: "phpunit/*"
+        versions: [">9.0"]
     groups:
       composer-require:
         dependency-type: "production"
