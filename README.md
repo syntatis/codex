@@ -15,7 +15,7 @@ This project aims to close that gap by offering functions and classes that make 
 
 The following is a list of projects that are built on top of the **Codex**:
 
-- [howdy](https://github.com/syntatis/howdy): A starter kit to develop a WordPress plugin with some common (modern) PHP practices.
+- [howdy](https://github.com/syntatis/howdy) 🚧: A starter kit to develop a WordPress plugin with some common (modern) PHP practices.
 
 
 ## Providers
