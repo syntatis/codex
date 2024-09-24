@@ -22,7 +22,7 @@ The following is a list of projects that are built on top of the **Codex**:
 
 Providers are classes that provide services to the Codex application. They are registered with the application and can be accessed via the application's container.
 
-- `codex-assets-provider` 🚧: Provides a way to enqueue scripts and styles in WordPress.
+- [`codex-assets-provider`](https://github.com/syntatis/codex-assets-provider) 🚧: Provides a way to enqueue scripts and styles in WordPress.
 
 ## Inspiration
 
