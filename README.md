@@ -11,9 +11,23 @@ WordPress is a powerful platform, but while PHP has evolved over the years, Word
 
 This project aims to close that gap by offering functions and classes that make it easier to build WordPress extensions with modern PHP techniques.
 
+## Projects
+
+The following is a list of projects that are built on top of the **Codex**:
+
+- [howdy](https://github.com/syntatis/howdy): A starter kit to develop a WordPress plugin with some common (modern) PHP practices.
+
+
+## Providers
+
+Providers are classes that provide services to the Codex application. They are registered with the application and can be accessed via the application's container.
+
+- `codex-assets-provider` 🚧: Provides a way to enqueue scripts and styles in WordPress.
+
 ## Inspiration
 
-This project is inspired by the following projects:
+This project is inspired by the following awesome projects in the PHP ecosystem:
 
 - [Illuminate: The Laravel Components](https://github.com/illuminate)
 - [Symfony: Reusable PHP components](https://github.com/symfony)
+
