@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Codex\Tests;
 
 use Codex\Abstracts\ServiceProvider;
-use Codex\Application;
 use Codex\Contracts\Activatable;
 use Codex\Contracts\Bootable;
 use Codex\Contracts\Deactivatable;
@@ -16,6 +15,7 @@ use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry as SettingsRegistry;
 use Codex\Foundation\Settings\Support\SettingRegistrar;
+use Codex\Plugin;
 use Codex\Providers\SettingsProvider;
 use Pimple\Container;
 use Psr\Container\ContainerInterface;
@@ -26,7 +26,7 @@ use function array_key_last;
 use function array_values;
 use function get_class;
 
-class ApplicationTest extends WPTestCase
+class PluginTest extends WPTestCase
 {
 	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 	public function set_up(): void
@@ -71,7 +71,7 @@ class ApplicationTest extends WPTestCase
 
 	public function testConfigService(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -101,7 +101,7 @@ class ApplicationTest extends WPTestCase
 	{
 		// $this->markAsRisky('Does not test with "admin_init" hook, as it may lead to unexpected warning.');
 
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -167,7 +167,7 @@ class ApplicationTest extends WPTestCase
 
 	public function testSettingsServiceAddOptionDeregisteredInvalidValue(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -191,7 +191,7 @@ class ApplicationTest extends WPTestCase
 
 	public function testSettingsServiceUpdateOptionDeregisteredInvalidValue(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -217,7 +217,7 @@ class ApplicationTest extends WPTestCase
 
 	public function testActivatable(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable, Activatable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -237,7 +237,7 @@ class ApplicationTest extends WPTestCase
 
 	public function testDeactivatable(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable, Deactivatable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -261,7 +261,7 @@ class ApplicationTest extends WPTestCase
 
 	public function testBlocksRegisterHook(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -293,7 +293,7 @@ class ApplicationTest extends WPTestCase
 
 	public function testServiceProvider(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -319,7 +319,7 @@ class ApplicationTest extends WPTestCase
 
 	public function testHookableAndBootableService(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -347,7 +347,7 @@ class ApplicationTest extends WPTestCase
 				$GLOBALS[self::class] = 2;
 			}
 		};
-		$app = new Application($plugin);
+		$app = new Plugin($plugin);
 		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
 		$app->boot();
 
@@ -367,7 +367,7 @@ class ApplicationTest extends WPTestCase
 				$GLOBALS[self::class] = 3;
 			}
 		};
-		$app = new Application($plugin);
+		$app = new Plugin($plugin);
 		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
 		$app->boot();
 

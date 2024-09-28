@@ -35,7 +35,7 @@ use function is_subclass_of;
  */
 final class Plugin
 {
-	private Extendable $app;
+	private Extendable $ext;
 
 	private Hook $hook;
 
@@ -57,9 +57,9 @@ final class Plugin
 	 */
 	private string $pluginFilePath = '';
 
-	public function __construct(Extendable $app)
+	public function __construct(Extendable $ext)
 	{
-		$this->app = $app;
+		$this->ext = $ext;
 		$this->hook = new Hook();
 		$this->pimple = new PimpleContainer();
 		$this->container = new Container($this->pimple);
@@ -96,19 +96,19 @@ final class Plugin
 		 * @see https://developer.wordpress.org/reference/functions/register_deactivation_hook/
 		 * @todo Register update hooks to run actions when the plugin is updated.
 		 */
-		if ($this->app instanceof Activatable && is_file($this->pluginFilePath)) {
-			$app = $this->app;
+		if ($this->ext instanceof Activatable && is_file($this->pluginFilePath)) {
+			$ext = $this->ext;
 			register_activation_hook(
 				$this->pluginFilePath,
-				fn () => $app->activate($this->container),
+				fn () => $ext->activate($this->container),
 			);
 		}
 
-		if ($this->app instanceof Deactivatable && is_file($this->pluginFilePath)) {
-			$app = $this->app;
+		if ($this->ext instanceof Deactivatable && is_file($this->pluginFilePath)) {
+			$ext = $this->ext;
 			register_deactivation_hook(
 				$this->pluginFilePath,
-				fn () => $app->deactivate($this->container),
+				fn () => $ext->deactivate($this->container),
 			);
 		}
 
@@ -147,11 +147,11 @@ final class Plugin
 
 		$this->bootInstances();
 
-		if (! ($this->app instanceof Bootable)) {
+		if (! ($this->ext instanceof Bootable)) {
 			return;
 		}
 
-		$this->app->boot();
+		$this->ext->boot();
 	}
 
 	public function getContainer(): ContainerInterface
@@ -185,7 +185,7 @@ final class Plugin
 
 	private function bootInstances(): void
 	{
-		foreach ($this->app->getInstances($this->getContainer()) as $instance) {
+		foreach ($this->ext->getInstances($this->getContainer()) as $instance) {
 			if ($instance instanceof Hookable) {
 				$instance->hook($this->hook);
 			}
