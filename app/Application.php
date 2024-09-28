@@ -113,7 +113,7 @@ final class Application
 		}
 
 		/** @var Config $config */
-		$config = $this->container->get('config');
+		$config = $this->container->get('app/config');
 
 		/**
 		 * Load the plugin text domain for translation.
@@ -200,8 +200,9 @@ final class Application
 
 	private function registerCoreServices(): void
 	{
-		$this->pimple['hook'] = $this->hook;
-		$this->pimple['config'] = function (): Config {
+		$this->pimple['app/hook'] = $this->hook;
+		$this->pimple['app/plugin_file_path'] = $this->pluginFilePath;
+		$this->pimple['app/config'] = function (): Config {
 			$config = [];
 			$configDir = dirname($this->pluginFilePath) . '/inc/config';
 
@@ -227,12 +228,9 @@ final class Application
 
 			return new Config($config);
 		};
-
-		$this->pimple['app.plugin_file_path'] = $this->pluginFilePath;
 		$this->pimple['app'] = static function (PimpleContainer $container): App {
 			/** @var Config $config */
-			$config = $container['config'];
-
+			$config = $container['app/config'];
 			/** @var array<string,Registry> $settings */
 			$settings = $container['settings'] ?? [];
 

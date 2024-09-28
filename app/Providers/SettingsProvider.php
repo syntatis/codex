@@ -25,9 +25,10 @@ class SettingsProvider extends ServiceProvider implements Bootable
 	{
 		$this->container['settings'] = function (Container $container): array {
 			/** @var Config $config */
-			$config = $container['config'];
+			$config = $container['app/config'];
+			/** @var string $filePath */
+			$filePath = $container['app/plugin_file_path'];
 			$appName = $config->get('app.name');
-			$filePath = $container['app.plugin_file_path'];
 
 			if (! is_string($filePath) || Val::isBlank($filePath)) {
 				throw new InvalidArgumentException('The plugin file path is required to register the settings.');
