@@ -202,12 +202,12 @@ final class Application
 	{
 		$this->pimple['app/hook'] = $this->hook;
 		$this->pimple['app/plugin_file_path'] = $this->pluginFilePath;
-		$this->pimple['app/config'] = function (): Config {
+		$this->pimple['app/config'] = static function (PimpleContainer $container): Config {
 			$config = [];
-			$configDir = dirname($this->pluginFilePath) . '/inc/config';
+			$pluginFilePath = $container['app/plugin_file_path'] ?? '';
+			$configPath = wp_normalize_path(dirname($pluginFilePath) . '/inc/config');
 
-			if (is_dir($configDir)) {
-				$configPath = wp_normalize_path(dirname($this->pluginFilePath) . '/inc/config');
+			if (is_dir($configPath)) {
 				$iterator = new RecursiveDirectoryIterator($configPath, RecursiveDirectoryIterator::SKIP_DOTS);
 
 				foreach ($iterator as $configFile) {
