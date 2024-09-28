@@ -23,7 +23,7 @@ class SettingsProvider extends ServiceProvider implements Bootable
 {
 	public function register(): void
 	{
-		$this->container['app/setting-registries'] = static function (Container $container): array {
+		$this->container['app/setting_registries'] = static function (Container $container): array {
 			/** @var Config $config */
 			$config = $container['app/config'];
 			$filePath = $container['app/plugin_file_path'] ?? '';
