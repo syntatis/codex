@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace Codex\Foundation\Settings\Support;
 
-use Codex\Contracts\Hookable;
-use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Setting;
 
 use function trim;
 
-class SettingRegistrar implements Hookable
+class SettingRegistrar
 {
-	private Hook $hook;
-
 	private Setting $setting;
 
 	private string $name;
@@ -61,43 +57,18 @@ class SettingRegistrar implements Hookable
 		return $this->setting;
 	}
 
-	public function hook(Hook $hook): void
-	{
-		$this->hook = $hook;
-	}
-
 	public function register(): void
 	{
-		$this->callbacks['init'] = fn () => register_setting(
+		register_setting(
 			$this->group,
 			$this->name,
 			$this->setting->getSettingArgs(),
-		);
-
-		$this->hook->addAction(
-			'admin_init',
-			$this->callbacks['init'],
-			$this->priority,
-		);
-
-		$this->hook->addAction(
-			'rest_api_init',
-			$this->callbacks['init'],
-			$this->priority,
 		);
 	}
 
 	public function deregister(bool $delete = false): void
 	{
-		if (isset($this->callbacks['init'])) {
-			$this->hook->removeAction('admin_init', $this->callbacks['init'], $this->priority);
-			$this->hook->removeAction('rest_api_init', $this->callbacks['init'], $this->priority);
-
-			$init = fn () => unregister_setting($this->group, $this->name);
-
-			$this->hook->addAction('admin_init', $init, $this->priority);
-			$this->hook->addAction('rest_api_init', $init, $this->priority);
-		}
+		unregister_setting($this->group, $this->name);
 
 		if ($delete !== true) {
 			return;
