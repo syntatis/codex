@@ -22,6 +22,9 @@ class AppTest extends WPTestCase
 	{
 		parent::set_up();
 
+		remove_action('admin_init', '_maybe_update_core');
+		remove_action('admin_init', '_maybe_update_plugins');
+		remove_action('admin_init', '_maybe_update_themes');
 		remove_action('admin_init', '_wp_check_for_scheduled_split_terms');
 		remove_action('admin_init', '_wp_check_for_scheduled_update_comment_type');
 		remove_action('admin_init', 'default_password_nag_handler');
