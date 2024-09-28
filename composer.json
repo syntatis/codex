@@ -71,7 +71,9 @@
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true,
 			"phpstan/extension-installer": true,
-			"roots/wordpress-core-installer": true
+			"roots/wordpress-core-installer": true,
+			"bamarni/composer-bin-plugin": false,
+			"syntatis/composer-project-plugin": false
 		}
 	},
 	"prefer-stable": true,

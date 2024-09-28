@@ -23,7 +23,7 @@ class SettingsProvider extends ServiceProvider implements Bootable
 {
 	public function register(): void
 	{
-		$this->container['settings'] = function (Container $container): array {
+		$this->container['settings'] = static function (Container $container): array {
 			/** @var Config $config */
 			$config = $container['app/config'];
 			/** @var string $filePath */
@@ -71,7 +71,6 @@ class SettingsProvider extends ServiceProvider implements Bootable
 				 * Setting API with their type, default, and other attributes.
 				 */
 				$registry = new Registry($settingGroup);
-				$registry->hook($this->hook);
 				$registry->addSettings(...$register);
 
 				if (! $config->isBlank('app.option_prefix')) {
@@ -97,7 +96,8 @@ class SettingsProvider extends ServiceProvider implements Bootable
 		$settings = $this->container['settings'];
 
 		foreach ($settings as $setting) {
-			$setting->register();
+			$this->hook->addAction('admin_init', [$setting, 'register']);
+			$this->hook->addAction('rest_api_init', [$setting, 'register']);
 		}
 	}
 }

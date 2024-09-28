@@ -17,6 +17,47 @@ use function array_key_exists;
 
 class AppTest extends WPTestCase
 {
+	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+	public function set_up(): void
+	{
+		parent::set_up();
+
+		remove_action('admin_init', '_maybe_update_core');
+		remove_action('admin_init', '_maybe_update_plugins');
+		remove_action('admin_init', '_maybe_update_themes');
+		remove_action('admin_init', '_wp_check_for_scheduled_split_terms');
+		remove_action('admin_init', '_wp_check_for_scheduled_update_comment_type');
+		remove_action('admin_init', 'default_password_nag_handler');
+		remove_action('admin_init', 'handle_legacy_widget_preview_iframe', 20);
+		remove_action('admin_init', 'register_admin_color_schemes');
+		remove_action('admin_init', 'send_frame_options_header');
+		remove_action('admin_init', 'wp_admin_headers');
+		remove_action('admin_init', 'wp_schedule_update_network_counts');
+		remove_action('admin_init', 'wp_schedule_update_user_counts');
+		remove_action('admin_init', ['WP_Privacy_Policy_Content', 'add_suggested_content'], 1);
+		remove_action('admin_init', ['WP_Privacy_Policy_Content', 'text_change_check'], 100);
+	}
+
+	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+	public function tear_down(): void
+	{
+		parent::tear_down();
+
+		App::clearResolvedInstances();
+
+		add_action('admin_init', '_wp_check_for_scheduled_split_terms');
+		add_action('admin_init', '_wp_check_for_scheduled_update_comment_type');
+		add_action('admin_init', 'default_password_nag_handler');
+		add_action('admin_init', 'handle_legacy_widget_preview_iframe', 20);
+		add_action('admin_init', 'register_admin_color_schemes');
+		add_action('admin_init', 'send_frame_options_header');
+		add_action('admin_init', 'wp_admin_headers');
+		add_action('admin_init', 'wp_schedule_update_network_counts');
+		add_action('admin_init', 'wp_schedule_update_user_counts');
+		add_action('admin_init', ['WP_Privacy_Policy_Content', 'add_suggested_content'], 1);
+		add_action('admin_init', ['WP_Privacy_Policy_Content', 'text_change_check'], 100);
+	}
+
 	public function testName(): void
 	{
 		$app = new Application(
@@ -56,6 +97,8 @@ class AppTest extends WPTestCase
 		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
 		$app->boot();
 
+		do_action('admin_init');
+
 		$settings = App::settings();
 
 		$this->assertArrayNotHasKey('wp-test/plugin-foo', $settings); // Unsupported file extension, `.json`.
@@ -64,8 +107,8 @@ class AppTest extends WPTestCase
 		// wp-test/plugin-name-0
 		$this->assertInstanceOf(Registry::class, $settings['wp-test/plugin-name-0']);
 		$this->assertTrue($settings['wp-test/plugin-name-0']->isRegistered());
-		$this->assertTrue(array_key_exists('wp_test_foo', $settings['wp-test/plugin-name-0']->getRegistered()));
-		$this->assertInstanceOf(SettingRegistrar::class, $settings['wp-test/plugin-name-0']->getRegistered()['wp_test_foo']);
+		$this->assertTrue(array_key_exists('wp_test_foo', $settings['wp-test/plugin-name-0']->getRegisteredSettings()));
+		$this->assertInstanceOf(SettingRegistrar::class, $settings['wp-test/plugin-name-0']->getRegisteredSettings()['wp_test_foo']);
 
 		// wp-test/plugin-name-2
 		$this->assertInstanceOf(Registry::class, $settings['wp-test/plugin-name-2']);
