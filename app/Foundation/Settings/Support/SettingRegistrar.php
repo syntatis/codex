@@ -50,6 +50,16 @@ class SettingRegistrar implements Hookable
 		return $this->name;
 	}
 
+	public function getGroup(): string
+	{
+		return $this->group;
+	}
+
+	public function getSetting(): Setting
+	{
+		return $this->setting;
+	}
+
 	public function hook(Hook $hook): void
 	{
 		$this->hook = $hook;
@@ -57,51 +67,7 @@ class SettingRegistrar implements Hookable
 
 	public function register(): void
 	{
-		$inputValidator = new InputValidator($this->name);
-		$inputValidator->setConstraints($this->setting->getConstraints());
-
 		$this->priority = $this->setting->getPriority();
-		$this->callbacks['default_option'] = function ($default, $option, $passedDefault) {
-			return $passedDefault ? $default : $this->setting->getDefault();
-		};
-		$this->callbacks['add_option'] = function ($optionName, $value) use ($inputValidator): void {
-			if ($optionName !== $this->name) {
-				return;
-			}
-
-			$inputValidator->validate($value);
-		};
-		$this->callbacks['update_option'] = function ($optionName, $oldValue, $newValue) use ($inputValidator): void {
-			if ($optionName !== $this->name) {
-				return;
-			}
-
-			$inputValidator->validate($newValue);
-		};
-
-		$this->hook->addFilter(
-			'default_option_' . $this->name,
-			$this->callbacks['default_option'],
-			$this->priority,
-			3,
-		);
-
-		// Run before the option is added.
-		$this->hook->addAction(
-			'add_option',
-			$this->callbacks['add_option'],
-			$this->priority,
-			2,
-		);
-
-		// Run before the option is updated.
-		$this->hook->addAction(
-			'update_option',
-			$this->callbacks['update_option'],
-			$this->priority,
-			3,
-		);
-
 		$this->callbacks['init'] = fn () => register_setting(
 			$this->group,
 			$this->name,
@@ -123,30 +89,6 @@ class SettingRegistrar implements Hookable
 
 	public function deregister(bool $delete = false): void
 	{
-		if (isset($this->callbacks['default_option'])) {
-			$this->hook->removeAction(
-				'default_option_' . $this->name,
-				$this->callbacks['default_option'],
-				$this->priority,
-			);
-		}
-
-		if (isset($this->callbacks['add_option'])) {
-			$this->hook->removeAction(
-				'add_option',
-				$this->callbacks['add_option'],
-				$this->priority,
-			);
-		}
-
-		if (isset($this->callbacks['update_option'])) {
-			$this->hook->removeAction(
-				'update_option',
-				$this->callbacks['update_option'],
-				$this->priority,
-			);
-		}
-
 		if (isset($this->callbacks['init'])) {
 			$this->hook->removeAction('admin_init', $this->callbacks['init'], $this->priority);
 			$this->hook->removeAction('rest_api_init', $this->callbacks['init'], $this->priority);
