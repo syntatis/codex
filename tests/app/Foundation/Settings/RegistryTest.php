@@ -10,7 +10,6 @@ use Codex\Foundation\Settings\Setting;
 use Codex\Tests\WPTestCase;
 use InvalidArgumentException;
 
-use function trim;
 use function version_compare;
 
 class RegistryTest extends WPTestCase
