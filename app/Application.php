@@ -204,6 +204,8 @@ final class Application
 		$this->pimple['app/plugin_file_path'] = $this->pluginFilePath;
 		$this->pimple['app/config'] = static function (PimpleContainer $container): Config {
 			$config = [];
+
+			/** @var string $pluginFilePath */
 			$pluginFilePath = $container['app/plugin_file_path'] ?? '';
 			$configPath = wp_normalize_path(dirname($pluginFilePath) . '/inc/config');
 
