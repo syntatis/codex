@@ -107,8 +107,8 @@ class AppTest extends WPTestCase
 		// wp-test/plugin-name-0
 		$this->assertInstanceOf(Registry::class, $settings['wp-test/plugin-name-0']);
 		$this->assertTrue($settings['wp-test/plugin-name-0']->isRegistered());
-		$this->assertTrue(array_key_exists('wp_test_foo', $settings['wp-test/plugin-name-0']->getRegistered()));
-		$this->assertInstanceOf(SettingRegistrar::class, $settings['wp-test/plugin-name-0']->getRegistered()['wp_test_foo']);
+		$this->assertTrue(array_key_exists('wp_test_foo', $settings['wp-test/plugin-name-0']->getRegisteredSettings()));
+		$this->assertInstanceOf(SettingRegistrar::class, $settings['wp-test/plugin-name-0']->getRegisteredSettings()['wp_test_foo']);
 
 		// wp-test/plugin-name-2
 		$this->assertInstanceOf(Registry::class, $settings['wp-test/plugin-name-2']);

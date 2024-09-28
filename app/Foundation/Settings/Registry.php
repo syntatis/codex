@@ -17,7 +17,7 @@ class Registry
 	/** @phpstan-var non-empty-string $settingGroup */
 	private string $settingGroup;
 
-	/** @var array<Setting> */
+	/** @var array<string,Setting> */
 	private array $settings = [];
 
 	/** @var array<string,SettingRegistrar> */
@@ -39,7 +39,9 @@ class Registry
 
 	public function addSettings(Setting ...$settings): void
 	{
-		$this->settings = [...$this->settings, ...$settings];
+		foreach ($settings as $key => $setting) {
+			$this->settings[$setting->getName()] = $setting;
+		}
 	}
 
 	public function register(): void
@@ -63,8 +65,14 @@ class Registry
 		return $this->settingGroup;
 	}
 
+	/** @return array<string,Setting> */
+	public function getSettings(): array
+	{
+		return $this->settings;
+	}
+
 	/** @return array<string,SettingRegistrar> */
-	public function getRegistered(): array
+	public function getRegisteredSettings(): array
 	{
 		return $this->registered;
 	}

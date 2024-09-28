@@ -125,7 +125,7 @@ class ApplicationTest extends WPTestCase
 		$this->assertTrue($settings['wp-test/plugin-name-0']->isRegistered());
 		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
 
-		$registered = $settings['wp-test/plugin-name-0']->getRegistered();
+		$registered = $settings['wp-test/plugin-name-0']->getRegisteredSettings();
 
 		$this->assertTrue(array_key_exists('wp_test_foo', $registered));
 		$this->assertInstanceOf(SettingRegistrar::class, $registered['wp_test_foo']);
@@ -135,7 +135,7 @@ class ApplicationTest extends WPTestCase
 		$this->assertTrue($settings['wp-test/plugin-name-2']->isRegistered());
 		$this->assertSame(100, get_option('wp_test_bar'));
 
-		$registered = $settings['wp-test/plugin-name-2']->getRegistered();
+		$registered = $settings['wp-test/plugin-name-2']->getRegisteredSettings();
 
 		$this->assertTrue(array_key_exists('wp_test_bar', $registered));
 		$this->assertInstanceOf(SettingRegistrar::class, $registered['wp_test_bar']);
@@ -145,14 +145,14 @@ class ApplicationTest extends WPTestCase
 		// wp-test/plugin-name-0
 		$this->assertFalse($settings['wp-test/plugin-name-0']->isRegistered());
 		$this->assertFalse(get_option('wp_test_foo'));
-		$this->assertEmpty($settings['wp-test/plugin-name-0']->getRegistered());
+		$this->assertEmpty($settings['wp-test/plugin-name-0']->getRegisteredSettings());
 
 		// wp-test/plugin-name-2
 		$this->assertInstanceOf(SettingsRegistry::class, $settings['wp-test/plugin-name-2']);
 		$this->assertTrue($settings['wp-test/plugin-name-2']->isRegistered());
 		$this->assertSame(100, get_option('wp_test_bar'));
 
-		$registered = $settings['wp-test/plugin-name-2']->getRegistered();
+		$registered = $settings['wp-test/plugin-name-2']->getRegisteredSettings();
 
 		$this->assertTrue(array_key_exists('wp_test_bar', $registered));
 		$this->assertInstanceOf(SettingRegistrar::class, $registered['wp_test_bar']);
@@ -162,7 +162,7 @@ class ApplicationTest extends WPTestCase
 		// wp-test/plugin-name-2
 		$this->assertFalse($settings['wp-test/plugin-name-2']->isRegistered());
 		$this->assertFalse(get_option('wp_test_bar'));
-		$this->assertEmpty($settings['wp-test/plugin-name-2']->getRegistered());
+		$this->assertEmpty($settings['wp-test/plugin-name-2']->getRegisteredSettings());
 	}
 
 	public function testSettingsServiceAddOptionDeregisteredInvalidValue(): void
