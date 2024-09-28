@@ -17,7 +17,6 @@ use Syntatis\Utils\Val;
 
 use function dirname;
 use function is_dir;
-use function is_string;
 
 class SettingsProvider extends ServiceProvider implements Bootable
 {
@@ -26,11 +25,10 @@ class SettingsProvider extends ServiceProvider implements Bootable
 		$this->container['app/setting-registries'] = static function (Container $container): array {
 			/** @var Config $config */
 			$config = $container['app/config'];
-			/** @var string $filePath */
-			$filePath = $container['app/plugin_file_path'];
+			$filePath = (string) ($container['app/plugin_file_path'] ?? '');
 			$appName = $config->get('app.name');
 
-			if (! is_string($filePath) || Val::isBlank($filePath)) {
+			if (Val::isBlank($filePath)) {
 				throw new InvalidArgumentException('The plugin file path is required to register the settings.');
 			}
 
