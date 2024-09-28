@@ -42,11 +42,14 @@ class RegistryTest extends WPTestCase
 	{
 		$registry = new Registry('codex');
 		$registry->addSettings(...[
-			(new Setting('say'))->withDefault('Hello, World!'),
-			(new Setting('count', 'number'))->withDefault(1),
-			(new Setting('list', 'array'))->withDefault(['count', 'two', 'three']),
+			(new Setting('say'))
+				->withDefault('Hello, World!'),
+			(new Setting('count', 'number'))
+				->withDefault(1),
+			(new Setting('list', 'array'))
+				->withDefault(['count', 'two', 'three'])
+				->apiSchema(['items' => ['type' => 'string']]),
 		]);
-		$registry->hook($this->hook);
 		$registry->register();
 
 		$this->assertTrue($registry->isRegistered());
@@ -58,8 +61,6 @@ class RegistryTest extends WPTestCase
 
 	public function testRegisteredSettings(): void
 	{
-		$this->markAsRisky('Does not test with "admin_init" hook, as it may lead to unexpected warning.');
-
 		$registry = new Registry('codex');
 		$registry->addSettings(...[
 			(new Setting('say', 'string'))
@@ -72,16 +73,13 @@ class RegistryTest extends WPTestCase
 				->withDefault(['count', 'two', 'three'])
 				->apiSchema(['items' => ['type' => 'string']]),
 		]);
-		$registry->hook($this->hook);
-		$registry->register();
-
 		$registeredSettings = get_registered_settings();
 
 		$this->assertArrayNotHasKey('say', $registeredSettings);
 		$this->assertArrayNotHasKey('count', $registeredSettings);
 		$this->assertArrayNotHasKey('list', $registeredSettings);
 
-		do_action('rest_api_init');
+		$registry->register();
 
 		$registeredSettings = get_registered_settings();
 
@@ -117,8 +115,6 @@ class RegistryTest extends WPTestCase
 
 		$registry->deregister();
 
-		do_action('rest_api_init');
-
 		$registeredSettings = get_registered_settings();
 
 		$this->assertArrayNotHasKey('say', $registeredSettings);
@@ -130,11 +126,14 @@ class RegistryTest extends WPTestCase
 	{
 		$registry = new Registry('codex');
 		$registry->addSettings(...[
-			(new Setting('say', 'string'))->withDefault('Hello, World!'),
-			(new Setting('count', 'number'))->withDefault(1),
-			(new Setting('list', 'array'))->withDefault(['count', 'two', 'three']),
+			(new Setting('say', 'string'))
+				->withDefault('Hello, World!'),
+			(new Setting('count', 'number'))
+				->withDefault(1),
+			(new Setting('list', 'array'))
+				->withDefault(['count', 'two', 'three'])
+				->apiSchema(['items' => ['type' => 'string']]),
 		]);
-		$registry->hook($this->hook);
 
 		$this->assertFalse(get_option('say'));
 		$this->assertFalse(get_option('count'));
@@ -157,12 +156,15 @@ class RegistryTest extends WPTestCase
 	{
 		$registry = new Registry('codex');
 		$registry->addSettings(...[
-			(new Setting('say', 'string'))->withDefault('Hello, World!'),
-			(new Setting('count', 'number'))->withDefault(1),
-			(new Setting('list', 'array'))->withDefault(['count', 'two', 'three']),
+			(new Setting('say', 'string'))
+				->withDefault('Hello, World!'),
+			(new Setting('count', 'number'))
+				->withDefault(1),
+			(new Setting('list', 'array'))
+				->withDefault(['count', 'two', 'three'])
+				->apiSchema(['items' => ['type' => 'string']]),
 		]);
 		$registry->setPrefix('codex_');
-		$registry->hook($this->hook);
 
 		$this->assertFalse(get_option('codex_say'));
 		$this->assertFalse(get_option('codex_count'));
@@ -189,7 +191,6 @@ class RegistryTest extends WPTestCase
 				->withDefault('Hello, World!'),
 		]);
 		$registry->setPrefix('codex_');
-		$registry->hook($this->hook);
 		$registry->register();
 
 		$this->assertSame('Hello, World!', get_option('codex_say'));
@@ -205,7 +206,6 @@ class RegistryTest extends WPTestCase
 				->withDefault('Hello, World!'),
 		]);
 		$registry->setPrefix('codex_');
-		$registry->hook($this->hook);
 		$registry->register();
 
 		$this->assertTrue(add_option('codex_say', 'Hi'));
@@ -222,7 +222,6 @@ class RegistryTest extends WPTestCase
 				->withDefault('Hello, World!'),
 		]);
 		$registry->setPrefix('codex_');
-		$registry->hook($this->hook);
 		$registry->register();
 
 		$this->assertSame('Hello, World!', get_option('codex_say'));
@@ -240,7 +239,6 @@ class RegistryTest extends WPTestCase
 				->withDefault('Hello, World!'),
 		]);
 		$registry->setPrefix('codex_');
-		$registry->hook($this->hook);
 		$registry->register();
 
 		$this->assertSame('Hello, World!', get_option('codex_say'));
@@ -256,7 +254,6 @@ class RegistryTest extends WPTestCase
 				->withDefault('Hello, World!'),
 		]);
 		$registry->setPrefix('codex_');
-		$registry->hook($this->hook);
 		$registry->register();
 
 		$this->assertSame('Hello, World!', get_option('codex_say'));
@@ -286,7 +283,6 @@ class RegistryTest extends WPTestCase
 				->withDefault('Hello, World!'),
 		]);
 		$registry->setPrefix('codex_');
-		$registry->hook($this->hook);
 		$registry->register();
 
 		$this->assertSame('Hello, World!', get_option('codex_say'));

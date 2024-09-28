@@ -4,18 +4,14 @@ declare(strict_types=1);
 
 namespace Codex\Foundation\Settings;
 
-use Codex\Contracts\Hookable;
-use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Support\SettingRegistrar;
 use InvalidArgumentException;
 use Syntatis\Utils\Val;
 
 use function count;
 
-class Registry implements Hookable
+class Registry
 {
-	private Hook $hook;
-
 	private string $prefix = '';
 
 	/** @phpstan-var non-empty-string $settingGroup */
@@ -36,11 +32,6 @@ class Registry implements Hookable
 		$this->settingGroup = $settingGroup;
 	}
 
-	public function hook(Hook $hook): void
-	{
-		$this->hook = $hook;
-	}
-
 	public function setPrefix(string $prefix): void
 	{
 		$this->prefix = $prefix;
@@ -56,7 +47,6 @@ class Registry implements Hookable
 		foreach ($this->settings as $setting) {
 			$registry = new SettingRegistrar($setting, $this->settingGroup);
 			$registry->setPrefix($this->prefix);
-			$registry->hook($this->hook);
 			$registry->register();
 
 			$this->registered[$registry->getName()] = $registry;
