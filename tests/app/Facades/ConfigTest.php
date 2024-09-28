@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Codex\Tests\Facades;
 
-use Codex\Application;
 use Codex\Contracts\Extendable;
 use Codex\Facades\Config;
+use Codex\Plugin;
 use Codex\Tests\WPTestCase;
 use Psr\Container\ContainerInterface;
 
@@ -14,7 +14,7 @@ class ConfigTest extends WPTestCase
 {
 	public function testGet(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{

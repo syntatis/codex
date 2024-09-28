@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Codex\Tests\Facades;
 
-use Codex\Application;
 use Codex\Contracts\Extendable;
 use Codex\Facades\App;
 use Codex\Foundation\Settings\Registry;
 use Codex\Foundation\Settings\Support\SettingRegistrar;
+use Codex\Plugin;
 use Codex\Providers\SettingsProvider;
 use Codex\Tests\WPTestCase;
 use Psr\Container\ContainerInterface;
@@ -60,7 +60,7 @@ class AppTest extends WPTestCase
 
 	public function testName(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
@@ -81,7 +81,7 @@ class AppTest extends WPTestCase
 
 	public function testSettings(): void
 	{
-		$app = new Application(
+		$app = new Plugin(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
 				{
