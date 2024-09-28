@@ -23,13 +23,13 @@ class SettingsProvider extends ServiceProvider implements Bootable
 {
 	public function register(): void
 	{
-		$this->container['settings'] = static function (Container $container): array {
+		$this->container['app/setting_registries'] = static function (Container $container): array {
 			/** @var Config $config */
-			$config = $container['config'];
-			$appName = $config->get('app.name');
-			$filePath = $container['app.plugin_file_path'];
+			$config = $container['app/config'];
+			$filePath = $container['app/plugin_file_path'] ?? '';
+			$filePath = is_string($filePath) ? $filePath : '';
 
-			if (! is_string($filePath) || Val::isBlank($filePath)) {
+			if (Val::isBlank($filePath)) {
 				throw new InvalidArgumentException('The plugin file path is required to register the settings.');
 			}
 
@@ -39,12 +39,14 @@ class SettingsProvider extends ServiceProvider implements Bootable
 				throw new InvalidArgumentException('The settings directory does not exist.');
 			}
 
-			/** @var array<string,Registry> $registries */
-			$registries = [];
+			$appName = $config->get('app.name');
 			$settingFiles = new RecursiveDirectoryIterator(
 				$settingsDir,
 				RecursiveDirectoryIterator::SKIP_DOTS,
 			);
+
+			/** @var array<string,Registry> $settingRegistries */
+			$settingRegistries = [];
 
 			foreach ($settingFiles as $settingFile) {
 				if (
@@ -78,10 +80,10 @@ class SettingsProvider extends ServiceProvider implements Bootable
 					$registry->setPrefix($prefix);
 				}
 
-				$registries[$settingGroup] = $registry;
+				$settingRegistries[$settingGroup] = $registry;
 			}
 
-			return $registries;
+			return $settingRegistries;
 		};
 	}
 
@@ -92,7 +94,7 @@ class SettingsProvider extends ServiceProvider implements Bootable
 		 *
 		 * @var array<string,Registry> $settings
 		 */
-		$settings = $this->container['settings'];
+		$settings = $this->container['app/setting_registries'];
 
 		foreach ($settings as $setting) {
 			$this->hook->addAction('admin_init', [$setting, 'register']);

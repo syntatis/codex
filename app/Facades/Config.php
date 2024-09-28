@@ -15,6 +15,6 @@ final class Config extends Facade
 {
 	protected static function getFacadeAccessor(): string
 	{
-		return 'config';
+		return 'app/config';
 	}
 }

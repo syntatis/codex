@@ -84,7 +84,7 @@ class ApplicationTest extends WPTestCase
 
 		$container = $app->getContainer();
 		/** @var Config $config */
-		$config = $container->get('config');
+		$config = $container->get('app/config');
 
 		$this->assertSame('wp-test', $config->get('app.text_domain'));
 		$this->assertSame('/dist', $config->get('app.assets_path'));
@@ -113,56 +113,56 @@ class ApplicationTest extends WPTestCase
 		$app->addServices([SettingsProvider::class]);
 		$app->boot();
 
-		$settings = $app->getContainer()->get('settings');
+		$settingRegistries = $app->getContainer()->get('app/setting_registries');
 
 		do_action('admin_init');
 
-		$this->assertArrayNotHasKey('wp-test/plugin-foo', $settings); // Unsupported file extension, `.json`.
-		$this->assertArrayNotHasKey('wp-test/plugin-name-1', $settings); // Settings empty.
+		$this->assertArrayNotHasKey('wp-test/plugin-foo', $settingRegistries); // Unsupported file extension, `.json`.
+		$this->assertArrayNotHasKey('wp-test/plugin-name-1', $settingRegistries); // Settings empty.
 
 		// wp-test/plugin-name-0
-		$this->assertInstanceOf(SettingsRegistry::class, $settings['wp-test/plugin-name-0']);
-		$this->assertTrue($settings['wp-test/plugin-name-0']->isRegistered());
+		$this->assertInstanceOf(SettingsRegistry::class, $settingRegistries['wp-test/plugin-name-0']);
+		$this->assertTrue($settingRegistries['wp-test/plugin-name-0']->isRegistered());
 		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
 
-		$registered = $settings['wp-test/plugin-name-0']->getRegisteredSettings();
+		$registered = $settingRegistries['wp-test/plugin-name-0']->getRegisteredSettings();
 
 		$this->assertTrue(array_key_exists('wp_test_foo', $registered));
 		$this->assertInstanceOf(SettingRegistrar::class, $registered['wp_test_foo']);
 
 		// wp-test/plugin-name-2
-		$this->assertInstanceOf(SettingsRegistry::class, $settings['wp-test/plugin-name-2']);
-		$this->assertTrue($settings['wp-test/plugin-name-2']->isRegistered());
+		$this->assertInstanceOf(SettingsRegistry::class, $settingRegistries['wp-test/plugin-name-2']);
+		$this->assertTrue($settingRegistries['wp-test/plugin-name-2']->isRegistered());
 		$this->assertSame(100, get_option('wp_test_bar'));
 
-		$registered = $settings['wp-test/plugin-name-2']->getRegisteredSettings();
+		$registered = $settingRegistries['wp-test/plugin-name-2']->getRegisteredSettings();
 
 		$this->assertTrue(array_key_exists('wp_test_bar', $registered));
 		$this->assertInstanceOf(SettingRegistrar::class, $registered['wp_test_bar']);
 
-		$settings['wp-test/plugin-name-0']->deregister();
+		$settingRegistries['wp-test/plugin-name-0']->deregister();
 
 		// wp-test/plugin-name-0
-		$this->assertFalse($settings['wp-test/plugin-name-0']->isRegistered());
+		$this->assertFalse($settingRegistries['wp-test/plugin-name-0']->isRegistered());
 		$this->assertFalse(get_option('wp_test_foo'));
-		$this->assertEmpty($settings['wp-test/plugin-name-0']->getRegisteredSettings());
+		$this->assertEmpty($settingRegistries['wp-test/plugin-name-0']->getRegisteredSettings());
 
 		// wp-test/plugin-name-2
-		$this->assertInstanceOf(SettingsRegistry::class, $settings['wp-test/plugin-name-2']);
-		$this->assertTrue($settings['wp-test/plugin-name-2']->isRegistered());
+		$this->assertInstanceOf(SettingsRegistry::class, $settingRegistries['wp-test/plugin-name-2']);
+		$this->assertTrue($settingRegistries['wp-test/plugin-name-2']->isRegistered());
 		$this->assertSame(100, get_option('wp_test_bar'));
 
-		$registered = $settings['wp-test/plugin-name-2']->getRegisteredSettings();
+		$registered = $settingRegistries['wp-test/plugin-name-2']->getRegisteredSettings();
 
 		$this->assertTrue(array_key_exists('wp_test_bar', $registered));
 		$this->assertInstanceOf(SettingRegistrar::class, $registered['wp_test_bar']);
 
-		$settings['wp-test/plugin-name-2']->deregister();
+		$settingRegistries['wp-test/plugin-name-2']->deregister();
 
 		// wp-test/plugin-name-2
-		$this->assertFalse($settings['wp-test/plugin-name-2']->isRegistered());
+		$this->assertFalse($settingRegistries['wp-test/plugin-name-2']->isRegistered());
 		$this->assertFalse(get_option('wp_test_bar'));
-		$this->assertEmpty($settings['wp-test/plugin-name-2']->getRegisteredSettings());
+		$this->assertEmpty($settingRegistries['wp-test/plugin-name-2']->getRegisteredSettings());
 	}
 
 	public function testSettingsServiceAddOptionDeregisteredInvalidValue(): void
@@ -183,8 +183,8 @@ class ApplicationTest extends WPTestCase
 
 		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
 
-		$settings = $app->getContainer()->get('settings');
-		$settings['wp-test/plugin-name-0']->deregister();
+		$settingRegistries = $app->getContainer()->get('app/setting_registries');
+		$settingRegistries['wp-test/plugin-name-0']->deregister();
 
 		$this->assertTrue(add_option('wp_test_foo', ''));
 	}
@@ -209,8 +209,8 @@ class ApplicationTest extends WPTestCase
 		$this->assertTrue(add_option('wp_test_foo', 'Hai!'));
 		$this->assertSame('Hai!', get_option('wp_test_foo'));
 
-		$settings = $app->getContainer()->get('settings');
-		$settings['wp-test/plugin-name-0']->deregister();
+		$settingRegistries = $app->getContainer()->get('app/setting_registries');
+		$settingRegistries['wp-test/plugin-name-0']->deregister();
 
 		$this->assertTrue(update_option('wp_test_foo', ''));
 	}
@@ -281,7 +281,7 @@ class ApplicationTest extends WPTestCase
 		$app->boot();
 
 		/** @var Hook $hook */
-		$hook = $app->getContainer()->get('hook');
+		$hook = $app->getContainer()->get('app/hook');
 
 		self::assertSame(10, $hook->hasAction('init', '@app.blocks.register'));
 

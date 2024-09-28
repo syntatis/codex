@@ -113,7 +113,7 @@ final class Application
 		}
 
 		/** @var Config $config */
-		$config = $this->container->get('config');
+		$config = $this->container->get('app/config');
 
 		/**
 		 * Load the plugin text domain for translation.
@@ -200,13 +200,16 @@ final class Application
 
 	private function registerCoreServices(): void
 	{
-		$this->pimple['hook'] = $this->hook;
-		$this->pimple['config'] = function (): Config {
+		$this->pimple['app/hook'] = $this->hook;
+		$this->pimple['app/plugin_file_path'] = $this->pluginFilePath;
+		$this->pimple['app/config'] = static function (PimpleContainer $container): Config {
 			$config = [];
-			$configDir = dirname($this->pluginFilePath) . '/inc/config';
 
-			if (is_dir($configDir)) {
-				$configPath = wp_normalize_path(dirname($this->pluginFilePath) . '/inc/config');
+			/** @var string $pluginFilePath */
+			$pluginFilePath = $container['app/plugin_file_path'] ?? '';
+			$configPath = wp_normalize_path(dirname($pluginFilePath) . '/inc/config');
+
+			if (is_dir($configPath)) {
 				$iterator = new RecursiveDirectoryIterator($configPath, RecursiveDirectoryIterator::SKIP_DOTS);
 
 				foreach ($iterator as $configFile) {
@@ -227,22 +230,19 @@ final class Application
 
 			return new Config($config);
 		};
-
-		$this->pimple['app.plugin_file_path'] = $this->pluginFilePath;
 		$this->pimple['app'] = static function (PimpleContainer $container): App {
 			/** @var Config $config */
-			$config = $container['config'];
-
-			/** @var array<string,Registry> $settings */
-			$settings = $container['settings'] ?? [];
-
+			$config = $container['app/config'];
 			$name = $config->get('app.name');
 
 			if (! is_string($name) || Val::isBlank($name)) {
 				throw new InvalidArgumentException('The app "name" is required and cannot be empty.');
 			}
 
-			return new App($name, $settings);
+			/** @var array<string,Registry> $settingRegistries */
+			$settingRegistries = $container['app/setting_registries'] ?? [];
+
+			return new App($name, $settingRegistries);
 		};
 	}
 }
