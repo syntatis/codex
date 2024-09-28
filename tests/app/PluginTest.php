@@ -11,6 +11,7 @@ use Codex\Contracts\Deactivatable;
 use Codex\Contracts\Extendable;
 use Codex\Contracts\Hookable;
 use Codex\Core\Config;
+use Codex\Facades\App;
 use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry as SettingsRegistry;
@@ -53,6 +54,8 @@ class PluginTest extends WPTestCase
 	public function tear_down(): void
 	{
 		unset($GLOBALS[Overture::class]);
+
+		App::clearResolvedInstances();
 
 		add_action('admin_init', '_wp_check_for_scheduled_split_terms');
 		add_action('admin_init', '_wp_check_for_scheduled_update_comment_type');
