@@ -17,6 +17,7 @@ use Syntatis\Utils\Val;
 
 use function dirname;
 use function is_dir;
+use function is_string;
 
 class SettingsProvider extends ServiceProvider implements Bootable
 {
@@ -25,7 +26,8 @@ class SettingsProvider extends ServiceProvider implements Bootable
 		$this->container['app/setting-registries'] = static function (Container $container): array {
 			/** @var Config $config */
 			$config = $container['app/config'];
-			$filePath = (string) ($container['app/plugin_file_path'] ?? '');
+			$filePath = $container['app/plugin_file_path'] ?? '';
+			$filePath = is_string($filePath) ? $filePath : '';
 			$appName = $config->get('app.name');
 
 			if (Val::isBlank($filePath)) {
