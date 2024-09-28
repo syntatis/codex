@@ -231,14 +231,14 @@ final class Hook
 	private function addRef(string $id, string $nativeId, array $entry): void
 	{
 		if ($nativeId !== $id) {
-			$atId = '@' . $id;
+			$hashId = '#' . $id;
 
-			if (isset($this->refs[$atId])) {
-				throw new RefExistsException($atId);
+			if (isset($this->refs[$hashId])) {
+				throw new RefExistsException($hashId);
 			}
 
-			$this->refs[$atId] = $entry;
-			$this->aliases[$nativeId] = $atId;
+			$this->refs[$hashId] = $entry;
+			$this->aliases[$nativeId] = $hashId;
 		} else {
 			$this->refs[$nativeId] = [
 				'callback' => $entry['callback'],
