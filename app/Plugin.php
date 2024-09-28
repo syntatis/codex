@@ -31,9 +31,9 @@ use function is_string;
 use function is_subclass_of;
 
 /**
- * Orchastates the WordPress application lifecycle and define the services.
+ * Orchastates the WordPress plugin lifecycle and define the required services.
  */
-final class Application
+final class Plugin
 {
 	private Extendable $app;
 
