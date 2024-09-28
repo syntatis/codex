@@ -71,12 +71,6 @@ class Setting
 		return $self;
 	}
 
-	/** @phpstan-return ValueDefault */
-	public function getDefault()
-	{
-		return $this->default;
-	}
-
 	/** @return static */
 	public function withLabel(string $label)
 	{
@@ -91,6 +85,15 @@ class Setting
 	{
 		$self = clone $this;
 		$self->settingVars['description'] = $value;
+
+		return $self;
+	}
+
+	/** @return static */
+	public function withPriority(int $priority)
+	{
+		$self = clone $this;
+		$self->priority = $priority;
 
 		return $self;
 	}
@@ -111,6 +114,12 @@ class Setting
 		];
 
 		return $self;
+	}
+
+	/** @phpstan-return ValueDefault */
+	public function getDefault()
+	{
+		return $this->default;
 	}
 
 	public function getPriority(): int

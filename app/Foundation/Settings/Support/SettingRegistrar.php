@@ -30,8 +30,9 @@ class SettingRegistrar implements Hookable
 	public function __construct(Setting $setting, string $group)
 	{
 		$this->setting = $setting;
-		$this->name = $setting->getName();
 		$this->group = $group;
+		$this->name = $setting->getName();
+		$this->priority = $setting->getPriority();
 	}
 
 	/**
@@ -67,7 +68,6 @@ class SettingRegistrar implements Hookable
 
 	public function register(): void
 	{
-		$this->priority = $this->setting->getPriority();
 		$this->callbacks['init'] = fn () => register_setting(
 			$this->group,
 			$this->name,
