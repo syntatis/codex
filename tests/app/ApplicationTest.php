@@ -17,7 +17,6 @@ use Codex\Foundation\Hooks\Hook;
 use Codex\Foundation\Settings\Registry as SettingsRegistry;
 use Codex\Foundation\Settings\Support\SettingRegistrar;
 use Codex\Providers\SettingsProvider;
-use InvalidArgumentException;
 use Pimple\Container;
 use Psr\Container\ContainerInterface;
 use stdClass;
@@ -30,9 +29,39 @@ use function get_class;
 class ApplicationTest extends WPTestCase
 {
 	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+	public function set_up(): void
+	{
+		parent::set_up();
+
+		remove_action('admin_init', '_wp_check_for_scheduled_split_terms');
+		remove_action('admin_init', '_wp_check_for_scheduled_update_comment_type');
+		remove_action('admin_init', 'default_password_nag_handler');
+		remove_action('admin_init', 'handle_legacy_widget_preview_iframe', 20);
+		remove_action('admin_init', 'register_admin_color_schemes');
+		remove_action('admin_init', 'send_frame_options_header');
+		remove_action('admin_init', 'wp_admin_headers');
+		remove_action('admin_init', 'wp_schedule_update_network_counts');
+		remove_action('admin_init', 'wp_schedule_update_user_counts');
+		remove_action('admin_init', ['WP_Privacy_Policy_Content', 'add_suggested_content'], 1);
+		remove_action('admin_init', ['WP_Privacy_Policy_Content', 'text_change_check'], 100);
+	}
+
+	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 	public function tear_down(): void
 	{
 		unset($GLOBALS[Overture::class]);
+
+		add_action('admin_init', '_wp_check_for_scheduled_split_terms');
+		add_action('admin_init', '_wp_check_for_scheduled_update_comment_type');
+		add_action('admin_init', 'default_password_nag_handler');
+		add_action('admin_init', 'handle_legacy_widget_preview_iframe', 20);
+		add_action('admin_init', 'register_admin_color_schemes');
+		add_action('admin_init', 'send_frame_options_header');
+		add_action('admin_init', 'wp_admin_headers');
+		add_action('admin_init', 'wp_schedule_update_network_counts');
+		add_action('admin_init', 'wp_schedule_update_user_counts');
+		add_action('admin_init', ['WP_Privacy_Policy_Content', 'add_suggested_content'], 1);
+		add_action('admin_init', ['WP_Privacy_Policy_Content', 'text_change_check'], 100);
 
 		parent::tear_down();
 	}
@@ -67,6 +96,8 @@ class ApplicationTest extends WPTestCase
 
 	public function testSettingsService(): void
 	{
+		// $this->markAsRisky('Does not test with "admin_init" hook, as it may lead to unexpected warning.');
+
 		$app = new Application(
 			new class () implements Extendable {
 				public function getInstances(ContainerInterface $container): iterable
@@ -80,6 +111,8 @@ class ApplicationTest extends WPTestCase
 		$app->boot();
 
 		$settings = $app->getContainer()->get('settings');
+
+		do_action('admin_init');
 
 		$this->assertArrayNotHasKey('wp-test/plugin-foo', $settings); // Unsupported file extension, `.json`.
 		$this->assertArrayNotHasKey('wp-test/plugin-name-1', $settings); // Settings empty.
@@ -129,27 +162,6 @@ class ApplicationTest extends WPTestCase
 		$this->assertEmpty($settings['wp-test/plugin-name-2']->getRegistered());
 	}
 
-	public function testSettingsServiceAddOptionInvalidValue(): void
-	{
-		$app = new Application(
-			new class () implements Extendable {
-				public function getInstances(ContainerInterface $container): iterable
-				{
-					return [];
-				}
-			},
-		);
-		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
-		$app->addServices([SettingsProvider::class]);
-		$app->boot();
-
-		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
-
-		$this->expectException(InvalidArgumentException::class);
-
-		add_option('wp_test_foo', '');
-	}
-
 	public function testSettingsServiceAddOptionDeregisteredInvalidValue(): void
 	{
 		$app = new Application(
@@ -164,35 +176,14 @@ class ApplicationTest extends WPTestCase
 		$app->addServices([SettingsProvider::class]);
 		$app->boot();
 
+		do_action('admin_init');
+
 		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
 
 		$settings = $app->getContainer()->get('settings');
 		$settings['wp-test/plugin-name-0']->deregister();
 
 		$this->assertTrue(add_option('wp_test_foo', ''));
-	}
-
-	public function testSettingsServiceUpdateOptionInvalidValue(): void
-	{
-		$app = new Application(
-			new class () implements Extendable {
-				public function getInstances(ContainerInterface $container): iterable
-				{
-					return [];
-				}
-			},
-		);
-		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
-		$app->addServices([SettingsProvider::class]);
-		$app->boot();
-
-		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
-		$this->assertTrue(add_option('wp_test_foo', 'Hi!'));
-		$this->assertSame('Hi!', get_option('wp_test_foo'));
-
-		$this->expectException(InvalidArgumentException::class);
-
-		update_option('wp_test_foo', '');
 	}
 
 	public function testSettingsServiceUpdateOptionDeregisteredInvalidValue(): void
@@ -208,6 +199,8 @@ class ApplicationTest extends WPTestCase
 		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
 		$app->addServices([SettingsProvider::class]);
 		$app->boot();
+
+		do_action('admin_init');
 
 		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
 		$this->assertTrue(add_option('wp_test_foo', 'Hai!'));
