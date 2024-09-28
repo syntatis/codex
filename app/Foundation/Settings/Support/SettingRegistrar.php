@@ -17,18 +17,12 @@ class SettingRegistrar
 	/** @phpstan-var non-empty-string */
 	private string $group;
 
-	/** @var array<string,callable> */
-	private array $callbacks = [];
-
-	private int $priority = 10;
-
 	/** @phpstan-param non-empty-string $group */
 	public function __construct(Setting $setting, string $group)
 	{
 		$this->setting = $setting;
 		$this->group = $group;
 		$this->name = $setting->getName();
-		$this->priority = $setting->getPriority();
 	}
 
 	/**
