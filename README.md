@@ -11,7 +11,7 @@ A codebase designed to build WordPress extensions with modern PHP practices.
 
 WordPress is a powerful platform, but while PHP has evolved over the years, WordPress development has largely stayed the same. Modern PHP practices like Autoloading with [Composer](https://getcomposer.org) and Dependency Injection aren't commonly used when building WordPress extensions. This situation has caused some gaps between WordPress and the rest of the PHP ecosystem.
 
-This project aims to close that gap by offering functions and classes that make it easier to build WordPress extensions with modern PHP techniques.
+This project aims to close that gap by providing functions, classes, and structure as the foundation to build WordPress extensions with modern PHP techniques.
 
 ## Projects
 
