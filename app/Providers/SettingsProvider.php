@@ -94,7 +94,7 @@ class SettingsProvider extends ServiceProvider implements Bootable
 		 *
 		 * @var array<string,Registry> $settings
 		 */
-		$settings = $this->container['settings'];
+		$settings = $this->container['app/setting_registries'];
 
 		foreach ($settings as $setting) {
 			$this->hook->addAction('admin_init', [$setting, 'register']);

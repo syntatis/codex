@@ -231,16 +231,16 @@ final class Application
 		$this->pimple['app'] = static function (PimpleContainer $container): App {
 			/** @var Config $config */
 			$config = $container['app/config'];
-			/** @var array<string,Registry> $settings */
-			$settings = $container['settings'] ?? [];
-
 			$name = $config->get('app.name');
 
 			if (! is_string($name) || Val::isBlank($name)) {
 				throw new InvalidArgumentException('The app "name" is required and cannot be empty.');
 			}
 
-			return new App($name, $settings);
+			/** @var array<string,Registry> $settingRegistries */
+			$settingRegistries = $container['app/setting_registries'] ?? [];
+
+			return new App($name, $settingRegistries);
 		};
 	}
 }
