@@ -22,28 +22,25 @@ use function array_merge;
  */
 class Setting
 {
-	private string $name;
+	protected string $name;
 
 	/** @phpstan-var ValueType */
-	private string $type = 'string';
+	protected string $type = 'string';
 
 	/** @phpstan-var ValueDefault */
-	private $default = null;
+	protected $default = null;
 
 	/**
 	 * The priority determines the order in which the `option_` related hooks
 	 * are executed.
 	 */
-	private int $priority = 73;
-
-	/** @phpstan-var array<Constraints> */
-	private $constraints = [];
+	protected int $priority = 73;
 
 	/**
 	 * @var array<string, mixed>
 	 * @phpstan-var SettingVars
 	 */
-	private array $settingVars = ['show_in_rest' => true];
+	protected array $settingVars = ['show_in_rest' => true];
 
 	/** @phpstan-param ValueType $type */
 	public function __construct(string $name, string $type = 'string')
