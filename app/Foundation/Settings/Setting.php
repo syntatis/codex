@@ -10,7 +10,6 @@ use Syntatis\Utils\Val;
 use function array_merge;
 
 /**
- * @phpstan-type Constraints callable|null
  * @phpstan-type ValueDefault bool|float|int|string|array<array-key, bool|float|int|string|array<array-key, mixed>>|null
  * @phpstan-type ValueFormat 'date-time'|'uri'|'email'|'ip'|'uuid'|'hex-color'
  * @phpstan-type ValueType 'string'|'boolean'|'integer'|'number'|'array'|'object'
@@ -106,21 +105,6 @@ class Setting
 		];
 
 		return $self;
-	}
-
-	/** @phpstan-param Constraints ...$constraints */
-	public function withConstraints(...$constraints): self
-	{
-		$self = clone $this;
-		$self->constraints = $constraints;
-
-		return $self;
-	}
-
-	/** @phpstan-return array<Constraints> */
-	public function getConstraints(): array
-	{
-		return $this->constraints;
 	}
 
 	public function getPriority(): int
