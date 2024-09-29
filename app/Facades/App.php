@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Codex\Facades;
 
 use Codex\Abstracts\Facade;
-use Codex\Foundation\Settings\Registry;
+use Codex\Core\Config;
 
 /**
  * @method static string name() Retrieve the application name.
- * @method static array<string,Registry>|Registry|null settings(?string $group = null) Retrieve the setting registry collection.
+ * @method static Config config() Retrieve the app config object.
  */
 final class App extends Facade
 {

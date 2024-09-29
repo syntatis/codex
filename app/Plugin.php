@@ -15,7 +15,6 @@ use Codex\Core\App;
 use Codex\Core\Config;
 use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
-use Codex\Foundation\Settings\Registry;
 use InvalidArgumentException;
 use Pimple\Container as PimpleContainer;
 use Pimple\Psr11\Container;
@@ -239,10 +238,7 @@ final class Plugin
 				throw new InvalidArgumentException('The app "name" is required and cannot be empty.');
 			}
 
-			/** @var array<string,Registry> $settingRegistries */
-			$settingRegistries = $container['app/setting_registries'] ?? [];
-
-			return new App($name, $settingRegistries);
+			return new App($name, $config);
 		};
 	}
 }
