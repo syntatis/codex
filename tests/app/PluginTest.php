@@ -50,6 +50,7 @@ class PluginTest extends WPTestCase
 	public function tear_down(): void
 	{
 		unset($GLOBALS[Overture::class]);
+		unset($GLOBALS[Notes::class]);
 
 		App::clearResolvedInstances();
 
@@ -198,7 +199,7 @@ class PluginTest extends WPTestCase
 		self::assertTrue($app->getContainer()->has('concerto'));
 	}
 
-	public function testHookableAndBootableService(): void
+	public function testHookableAndBootableInstance(): void
 	{
 		$app = new Plugin(
 			new class () implements Extendable {
@@ -215,7 +216,24 @@ class PluginTest extends WPTestCase
 		self::assertSame(1, $GLOBALS[Overture::class]);
 	}
 
-	public function testBoot(): void
+	public function testBootableInstanceWithoutInterface(): void
+	{
+		$app = new Plugin(
+			new class () implements Extendable {
+				public function getInstances(ContainerInterface $container): iterable
+				{
+					yield new Unoverture();
+				}
+			},
+		);
+		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
+		$app->boot();
+
+		self::assertSame(123, has_action('wp_loaded', '__return_null'));
+		self::assertFalse(isset($GLOBALS[Unoverture::class]));
+	}
+
+	public function testBootatbleExtension(): void
 	{
 		$plugin = new class () implements Extendable, Bootable {
 			public function getInstances(ContainerInterface $container): iterable
@@ -235,7 +253,7 @@ class PluginTest extends WPTestCase
 		self::assertSame(2, $GLOBALS[get_class($plugin)]);
 	}
 
-	public function testBootWithoutInterface(): void
+	public function testBootableExtensionWithoutInterface(): void
 	{
 		$plugin = new class () implements Extendable {
 			public function getInstances(ContainerInterface $container): iterable
@@ -253,6 +271,46 @@ class PluginTest extends WPTestCase
 		$app->boot();
 
 		self::assertFalse(isset($GLOBALS[get_class($plugin)]));
+	}
+
+	public function testBootableServiceProvider(): void
+	{
+		$app = new Plugin(
+			new class () implements Extendable {
+				public function getInstances(ContainerInterface $container): iterable
+				{
+					return [];
+				}
+			},
+		);
+		$app->addServices([Notes::class]);
+		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
+
+		self::assertFalse(isset($GLOBALS[Notes::class]));
+
+		$app->boot();
+
+		self::assertSame(123, $GLOBALS[Notes::class]);
+	}
+
+	public function testBootableServiceProviderWithoutInterface(): void
+	{
+		$app = new Plugin(
+			new class () implements Extendable {
+				public function getInstances(ContainerInterface $container): iterable
+				{
+					return [];
+				}
+			},
+		);
+		$app->addServices([Unotes::class]);
+		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
+
+		self::assertFalse(isset($GLOBALS[Unotes::class]));
+
+		$app->boot();
+
+		self::assertFalse(isset($GLOBALS[Unotes::class]));
 	}
 }
 
@@ -289,5 +347,44 @@ class Overture implements Hookable, Bootable
 	public function boot(): void
 	{
 		$GLOBALS[self::class] = 1;
+	}
+}
+
+class Unoverture implements Hookable
+{
+	public function hook(Hook $hook): void
+	{
+		$hook->addAction('wp_loaded', '__return_null', 123);
+	}
+
+	public function boot(): void
+	{
+		$GLOBALS[self::class] = 234;
+	}
+}
+
+class Notes extends ServiceProvider implements Bootable
+{
+	public function register(): void
+	{
+		$this->container['notes'] = new stdClass;
+	}
+
+	public function boot(): void
+	{
+		$GLOBALS[self::class] = 123;
+	}
+}
+
+class Unotes extends ServiceProvider
+{
+	public function register(): void
+	{
+		$this->container['unotes'] = new stdClass;
+	}
+
+	public function boot(): void
+	{
+		$GLOBALS[self::class] = 124;
 	}
 }
