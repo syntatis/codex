@@ -14,15 +14,11 @@ use Codex\Core\Config;
 use Codex\Facades\App;
 use Codex\Foundation\Blocks;
 use Codex\Foundation\Hooks\Hook;
-use Codex\Foundation\Settings\Registry as SettingsRegistry;
-use Codex\Foundation\Settings\Support\SettingRegistrar;
 use Codex\Plugin;
-use Codex\Providers\SettingsProvider;
 use Pimple\Container;
 use Psr\Container\ContainerInterface;
 use stdClass;
 
-use function array_key_exists;
 use function array_key_last;
 use function array_values;
 use function get_class;
@@ -54,6 +50,7 @@ class PluginTest extends WPTestCase
 	public function tear_down(): void
 	{
 		unset($GLOBALS[Overture::class]);
+		unset($GLOBALS[Notes::class]);
 
 		App::clearResolvedInstances();
 
@@ -98,124 +95,6 @@ class PluginTest extends WPTestCase
 		$this->assertFalse($config->has('non-existent-key'));
 		$this->assertTrue($config->isBlank('empty'));
 		$this->assertTrue($config->isBlank('blank'));
-	}
-
-	public function testSettingsService(): void
-	{
-		// $this->markAsRisky('Does not test with "admin_init" hook, as it may lead to unexpected warning.');
-
-		$app = new Plugin(
-			new class () implements Extendable {
-				public function getInstances(ContainerInterface $container): iterable
-				{
-					return [];
-				}
-			},
-		);
-		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
-		$app->addServices([SettingsProvider::class]);
-		$app->boot();
-
-		$settingRegistries = $app->getContainer()->get('app/setting_registries');
-
-		do_action('admin_init');
-
-		$this->assertArrayNotHasKey('wp-test/plugin-foo', $settingRegistries); // Unsupported file extension, `.json`.
-		$this->assertArrayNotHasKey('wp-test/plugin-name-1', $settingRegistries); // Settings empty.
-
-		// wp-test/plugin-name-0
-		$this->assertInstanceOf(SettingsRegistry::class, $settingRegistries['wp-test/plugin-name-0']);
-		$this->assertTrue($settingRegistries['wp-test/plugin-name-0']->isRegistered());
-		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
-
-		$registered = $settingRegistries['wp-test/plugin-name-0']->getRegisteredSettings();
-
-		$this->assertTrue(array_key_exists('wp_test_foo', $registered));
-		$this->assertInstanceOf(SettingRegistrar::class, $registered['wp_test_foo']);
-
-		// wp-test/plugin-name-2
-		$this->assertInstanceOf(SettingsRegistry::class, $settingRegistries['wp-test/plugin-name-2']);
-		$this->assertTrue($settingRegistries['wp-test/plugin-name-2']->isRegistered());
-		$this->assertSame(100, get_option('wp_test_bar'));
-
-		$registered = $settingRegistries['wp-test/plugin-name-2']->getRegisteredSettings();
-
-		$this->assertTrue(array_key_exists('wp_test_bar', $registered));
-		$this->assertInstanceOf(SettingRegistrar::class, $registered['wp_test_bar']);
-
-		$settingRegistries['wp-test/plugin-name-0']->deregister();
-
-		// wp-test/plugin-name-0
-		$this->assertFalse($settingRegistries['wp-test/plugin-name-0']->isRegistered());
-		$this->assertFalse(get_option('wp_test_foo'));
-		$this->assertEmpty($settingRegistries['wp-test/plugin-name-0']->getRegisteredSettings());
-
-		// wp-test/plugin-name-2
-		$this->assertInstanceOf(SettingsRegistry::class, $settingRegistries['wp-test/plugin-name-2']);
-		$this->assertTrue($settingRegistries['wp-test/plugin-name-2']->isRegistered());
-		$this->assertSame(100, get_option('wp_test_bar'));
-
-		$registered = $settingRegistries['wp-test/plugin-name-2']->getRegisteredSettings();
-
-		$this->assertTrue(array_key_exists('wp_test_bar', $registered));
-		$this->assertInstanceOf(SettingRegistrar::class, $registered['wp_test_bar']);
-
-		$settingRegistries['wp-test/plugin-name-2']->deregister();
-
-		// wp-test/plugin-name-2
-		$this->assertFalse($settingRegistries['wp-test/plugin-name-2']->isRegistered());
-		$this->assertFalse(get_option('wp_test_bar'));
-		$this->assertEmpty($settingRegistries['wp-test/plugin-name-2']->getRegisteredSettings());
-	}
-
-	public function testSettingsServiceAddOptionDeregisteredInvalidValue(): void
-	{
-		$app = new Plugin(
-			new class () implements Extendable {
-				public function getInstances(ContainerInterface $container): iterable
-				{
-					return [];
-				}
-			},
-		);
-		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
-		$app->addServices([SettingsProvider::class]);
-		$app->boot();
-
-		do_action('admin_init');
-
-		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
-
-		$settingRegistries = $app->getContainer()->get('app/setting_registries');
-		$settingRegistries['wp-test/plugin-name-0']->deregister();
-
-		$this->assertTrue(add_option('wp_test_foo', ''));
-	}
-
-	public function testSettingsServiceUpdateOptionDeregisteredInvalidValue(): void
-	{
-		$app = new Plugin(
-			new class () implements Extendable {
-				public function getInstances(ContainerInterface $container): iterable
-				{
-					return [];
-				}
-			},
-		);
-		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
-		$app->addServices([SettingsProvider::class]);
-		$app->boot();
-
-		do_action('admin_init');
-
-		$this->assertSame('Hello, World!', get_option('wp_test_foo'));
-		$this->assertTrue(add_option('wp_test_foo', 'Hai!'));
-		$this->assertSame('Hai!', get_option('wp_test_foo'));
-
-		$settingRegistries = $app->getContainer()->get('app/setting_registries');
-		$settingRegistries['wp-test/plugin-name-0']->deregister();
-
-		$this->assertTrue(update_option('wp_test_foo', ''));
 	}
 
 	public function testActivatable(): void
@@ -320,7 +199,7 @@ class PluginTest extends WPTestCase
 		self::assertTrue($app->getContainer()->has('concerto'));
 	}
 
-	public function testHookableAndBootableService(): void
+	public function testHookableAndBootableInstance(): void
 	{
 		$app = new Plugin(
 			new class () implements Extendable {
@@ -337,7 +216,24 @@ class PluginTest extends WPTestCase
 		self::assertSame(1, $GLOBALS[Overture::class]);
 	}
 
-	public function testBoot(): void
+	public function testBootableInstanceWithoutInterface(): void
+	{
+		$app = new Plugin(
+			new class () implements Extendable {
+				public function getInstances(ContainerInterface $container): iterable
+				{
+					yield new Unoverture();
+				}
+			},
+		);
+		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
+		$app->boot();
+
+		self::assertSame(123, has_action('wp_loaded', '__return_null'));
+		self::assertFalse(isset($GLOBALS[Unoverture::class]));
+	}
+
+	public function testBootatbleExtension(): void
 	{
 		$plugin = new class () implements Extendable, Bootable {
 			public function getInstances(ContainerInterface $container): iterable
@@ -357,7 +253,7 @@ class PluginTest extends WPTestCase
 		self::assertSame(2, $GLOBALS[get_class($plugin)]);
 	}
 
-	public function testBootWithoutInterface(): void
+	public function testBootableExtensionWithoutInterface(): void
 	{
 		$plugin = new class () implements Extendable {
 			public function getInstances(ContainerInterface $container): iterable
@@ -375,6 +271,46 @@ class PluginTest extends WPTestCase
 		$app->boot();
 
 		self::assertFalse(isset($GLOBALS[get_class($plugin)]));
+	}
+
+	public function testBootableServiceProvider(): void
+	{
+		$app = new Plugin(
+			new class () implements Extendable {
+				public function getInstances(ContainerInterface $container): iterable
+				{
+					return [];
+				}
+			},
+		);
+		$app->addServices([Notes::class]);
+		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
+
+		self::assertFalse(isset($GLOBALS[Notes::class]));
+
+		$app->boot();
+
+		self::assertSame(123, $GLOBALS[Notes::class]);
+	}
+
+	public function testBootableServiceProviderWithoutInterface(): void
+	{
+		$app = new Plugin(
+			new class () implements Extendable {
+				public function getInstances(ContainerInterface $container): iterable
+				{
+					return [];
+				}
+			},
+		);
+		$app->addServices([Unotes::class]);
+		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
+
+		self::assertFalse(isset($GLOBALS[Unotes::class]));
+
+		$app->boot();
+
+		self::assertFalse(isset($GLOBALS[Unotes::class]));
 	}
 }
 
@@ -411,5 +347,44 @@ class Overture implements Hookable, Bootable
 	public function boot(): void
 	{
 		$GLOBALS[self::class] = 1;
+	}
+}
+
+class Unoverture implements Hookable
+{
+	public function hook(Hook $hook): void
+	{
+		$hook->addAction('wp_loaded', '__return_null', 123);
+	}
+
+	public function boot(): void
+	{
+		$GLOBALS[self::class] = 234;
+	}
+}
+
+class Notes extends ServiceProvider implements Bootable
+{
+	public function register(): void
+	{
+		$this->container['notes'] = new stdClass;
+	}
+
+	public function boot(): void
+	{
+		$GLOBALS[self::class] = 123;
+	}
+}
+
+class Unotes extends ServiceProvider
+{
+	public function register(): void
+	{
+		$this->container['unotes'] = new stdClass;
+	}
+
+	public function boot(): void
+	{
+		$GLOBALS[self::class] = 124;
 	}
 }

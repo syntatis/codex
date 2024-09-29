@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace Codex\Core;
 
-use Codex\Foundation\Settings\Registry;
-use Syntatis\Utils\Val;
-
 final class App
 {
 	private string $name;
 
-	/** @var array<string,Registry> */
-	private array $settingRegistries = [];
+	private Config $config;
 
-	/** @param array<string,Registry> $settingRegistries */
-	public function __construct(string $name, array $settingRegistries = [])
+	public function __construct(string $name, Config $config)
 	{
 		$this->name = $name;
-		$this->settingRegistries = $settingRegistries;
+		$this->config = $config;
 	}
 
 	public function name(): string
@@ -26,15 +21,8 @@ final class App
 		return $this->name;
 	}
 
-	/** @return array<string,Registry>|Registry|null */
-	public function settings(?string $group = null)
+	public function config(): Config
 	{
-		if (! Val::isBlank($group)) {
-			$group = $this->name . '/' . $group;
-
-			return $this->settingRegistries[$group] ?? null;
-		}
-
-		return $this->settingRegistries;
+		return $this->config;
 	}
 }

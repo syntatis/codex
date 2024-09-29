@@ -6,14 +6,9 @@ namespace Codex\Tests\Facades;
 
 use Codex\Contracts\Extendable;
 use Codex\Facades\App;
-use Codex\Foundation\Settings\Registry;
-use Codex\Foundation\Settings\Support\SettingRegistrar;
 use Codex\Plugin;
-use Codex\Providers\SettingsProvider;
 use Codex\Tests\WPTestCase;
 use Psr\Container\ContainerInterface;
-
-use function array_key_exists;
 
 class AppTest extends WPTestCase
 {
@@ -72,14 +67,13 @@ class AppTest extends WPTestCase
 				}
 			},
 		);
-		$app->addServices([SettingsProvider::class]);
 		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
 		$app->boot();
 
 		$this->assertSame('wp-test', App::name());
 	}
 
-	public function testSettings(): void
+	public function testConfig(): void
 	{
 		$app = new Plugin(
 			new class () implements Extendable {
@@ -93,30 +87,17 @@ class AppTest extends WPTestCase
 				}
 			},
 		);
-		$app->addServices([SettingsProvider::class]);
 		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
 		$app->boot();
 
-		do_action('admin_init');
-
-		$settings = App::settings();
-
-		$this->assertArrayNotHasKey('wp-test/plugin-foo', $settings); // Unsupported file extension, `.json`.
-		$this->assertArrayNotHasKey('wp-test/plugin-name-1', $settings); // Settings empty.
-
-		// wp-test/plugin-name-0
-		$this->assertInstanceOf(Registry::class, $settings['wp-test/plugin-name-0']);
-		$this->assertTrue($settings['wp-test/plugin-name-0']->isRegistered());
-		$this->assertTrue(array_key_exists('wp_test_foo', $settings['wp-test/plugin-name-0']->getRegisteredSettings()));
-		$this->assertInstanceOf(SettingRegistrar::class, $settings['wp-test/plugin-name-0']->getRegisteredSettings()['wp_test_foo']);
-
-		// wp-test/plugin-name-2
-		$this->assertInstanceOf(Registry::class, $settings['wp-test/plugin-name-2']);
-		$this->assertTrue($settings['wp-test/plugin-name-2']->isRegistered());
-
-		$setting = App::settings('plugin-name-2');
-
-		$this->assertInstanceOf(Registry::class, $setting);
-		$this->assertSame('wp-test/plugin-name-2', $setting->getSettingGroup());
+		self::assertSame('wp-test', App::config()->get('app.text_domain'));
+		self::assertSame('/dist', App::config()->get('app.assets_path'));
+		self::assertSame('https://example.org/dist', App::config()->get('app.assets_url'));
+		self::assertSame('wp_test_', App::config()->get('app.option_prefix'));
+		self::assertSame('wp_test_', App::config()->get('app.option_prefix'));
+		self::assertTrue(App::config()->has('app.option_prefix'));
+		self::assertFalse(App::config()->has('non-existent-key'));
+		self::assertTrue(App::config()->isBlank('empty'));
+		self::assertTrue(App::config()->isBlank('blank'));
 	}
 }
