@@ -37,7 +37,7 @@
 		"php": ">=7.4",
 		"adbario/php-dot-notation": "^3.3",
 		"pimple/pimple": "^3.5",
-		"syntatis/utils": "^1.5"
+		"syntatis/utils": "^2.0"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
