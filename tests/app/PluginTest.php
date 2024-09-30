@@ -84,7 +84,7 @@ class PluginTest extends WPTestCase
 
 		$container = $app->getContainer();
 		/** @var Config $config */
-		$config = $container->get('app/config');
+		$config = $container->get('config');
 
 		$this->assertSame('wp-test', $config->get('app.text_domain'));
 		$this->assertSame('/dist', $config->get('app.assets_path'));
@@ -163,9 +163,9 @@ class PluginTest extends WPTestCase
 		$app->boot();
 
 		/** @var Hook $hook */
-		$hook = $app->getContainer()->get('app/hook');
+		$hook = $app->getContainer()->get('hook');
 
-		self::assertSame(10, $hook->hasAction('init', '#app.blocks.register'));
+		self::assertSame(10, $hook->hasAction('init', '#blocks-register'));
 
 		$filters = array_values($GLOBALS['wp_filter']['init'][10]);
 		$function = $filters[array_key_last($filters)]['function'];

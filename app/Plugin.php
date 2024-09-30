@@ -28,6 +28,7 @@ use function is_dir;
 use function is_file;
 use function is_string;
 use function is_subclass_of;
+use function method_exists;
 
 /**
  * Orchastates the WordPress plugin lifecycle and define the required services.
@@ -112,7 +113,7 @@ final class Plugin
 		}
 
 		/** @var Config $config */
-		$config = $this->container->get('app/config');
+		$config = $this->container->get('config');
 
 		/**
 		 * Load the plugin text domain for translation.
@@ -140,7 +141,7 @@ final class Plugin
 				/**
 				 * Register the blocks found in the specificed blocks directory.
 				 */
-				$this->hook->addAction('init', [$blocks, 'register'], 10, 1, ['id' => 'app.blocks.register']);
+				$this->hook->addAction('init', [$blocks, 'register'], 10, 1, ['id' => 'blocks-register']);
 			}
 		}
 
@@ -167,13 +168,21 @@ final class Plugin
 				continue;
 			}
 
-			/** @var ServiceProvider $service */
 			$service = new $service($this->pimple, $this->hook);
-			$service->register();
+
+			if (method_exists($service, 'register')) {
+				$service->register();
+			}
+
 			$instances[$key] = $service;
 		}
 
+		// We need to hook and boot the instances after all of services are registered.
 		foreach ($instances as $instance) {
+			if ($instance instanceof Hookable) {
+				$instance->hook($this->hook);
+			}
+
 			if (! ($instance instanceof Bootable)) {
 				continue;
 			}
@@ -199,13 +208,13 @@ final class Plugin
 
 	private function registerCoreServices(): void
 	{
-		$this->pimple['app/hook'] = $this->hook;
-		$this->pimple['app/plugin_file_path'] = $this->pluginFilePath;
-		$this->pimple['app/config'] = static function (PimpleContainer $container): Config {
+		$this->pimple['hook'] = $this->hook;
+		$this->pimple['plugin_file_path'] = $this->pluginFilePath;
+		$this->pimple['config'] = static function (PimpleContainer $container): Config {
 			$config = [];
 
 			/** @var string $pluginFilePath */
-			$pluginFilePath = $container['app/plugin_file_path'] ?? '';
+			$pluginFilePath = $container['plugin_file_path'] ?? '';
 			$configPath = wp_normalize_path(dirname($pluginFilePath) . '/inc/config');
 
 			if (is_dir($configPath)) {
@@ -231,7 +240,7 @@ final class Plugin
 		};
 		$this->pimple['app'] = static function (PimpleContainer $container): App {
 			/** @var Config $config */
-			$config = $container['app/config'];
+			$config = $container['config'];
 			$name = $config->get('app.name');
 
 			if (! is_string($name) || Val::isBlank($name)) {

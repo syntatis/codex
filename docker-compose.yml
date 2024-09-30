@@ -26,8 +26,6 @@ services:
 
   db_test:
     image: ${DB_IMAGE}
-    ports:
-      - ${DB_TEST_PORT_PUBLISHED}:3306
     volumes:
       - db_test_volume:/var/lib/mysql
     environment:
