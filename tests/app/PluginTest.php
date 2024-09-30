@@ -165,7 +165,7 @@ class PluginTest extends WPTestCase
 		/** @var Hook $hook */
 		$hook = $app->getContainer()->get('hook');
 
-		self::assertSame(10, $hook->hasAction('init', '#app.blocks.register'));
+		self::assertSame(10, $hook->hasAction('init', '#blocks-register'));
 
 		$filters = array_values($GLOBALS['wp_filter']['init'][10]);
 		$function = $filters[array_key_last($filters)]['function'];
