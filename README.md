@@ -17,14 +17,14 @@ This project aims to close that gap by providing functions, classes, and structu
 
 The following is a list of projects that are built on top of the **Codex**:
 
-- [howdy](https://github.com/syntatis/howdy) 🚧: A starter kit to develop a WordPress plugin with some common (modern) PHP practices.
+- [howdy](https://github.com/syntatis/howdy) 🧪: A starter kit to develop a WordPress plugin with some common (modern) PHP practices.
 
 
 ## Providers
 
 Providers are classes that provide services to the Codex application. They are registered with the application and can be accessed via the application's container.
 
-- [`codex-assets-provider`](https://github.com/syntatis/codex-assets-provider) 🚧: Provides a way to enqueue scripts and styles in WordPress.
+- [`codex-settings-provider`](https://github.com/syntatis/codex-settings-provider) 🧪: Codex service provider for WordPress Settings API
 
 ## Inspiration
 
