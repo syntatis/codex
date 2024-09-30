@@ -28,6 +28,7 @@ use function is_dir;
 use function is_file;
 use function is_string;
 use function is_subclass_of;
+use function method_exists;
 
 /**
  * Orchastates the WordPress plugin lifecycle and define the required services.
@@ -167,13 +168,21 @@ final class Plugin
 				continue;
 			}
 
-			/** @var ServiceProvider $service */
 			$service = new $service($this->pimple, $this->hook);
-			$service->register();
+
+			if (method_exists($service, 'register')) {
+				$service->register();
+			}
+
 			$instances[$key] = $service;
 		}
 
+		// We need to hook and boot the instances after all of services are registered.
 		foreach ($instances as $instance) {
+			if ($instance instanceof Hookable) {
+				$instance->hook($this->hook);
+			}
+
 			if (! ($instance instanceof Bootable)) {
 				continue;
 			}
