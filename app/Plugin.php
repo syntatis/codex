@@ -140,7 +140,7 @@ final class Plugin
 				/**
 				 * Register the blocks found in the specificed blocks directory.
 				 */
-				$this->hook->addAction('init', [$blocks, 'register'], 10, 1, ['id' => 'app.blocks.register']);
+				$this->hook->addAction('init', [$blocks, 'register'], 10, 1, ['id' => 'blocks-register']);
 			}
 		}
 
