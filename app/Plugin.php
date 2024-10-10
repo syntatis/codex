@@ -245,6 +245,11 @@ final class Plugin
 		$this->pimple['app'] = static function (PimpleContainer $container): App {
 			/** @var Config $config */
 			$config = $container['config'];
+			/**
+			 * @internal App name has been validated in the Config class.
+			 *
+			 * @var string $name
+			 */
 			$name = $config->get('app.name');
 
 			return new App($name, $config);
