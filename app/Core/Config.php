@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Codex\Core;
 
 use Adbar\Dot;
-use Syntatis\Utils\Val;
 
+use function count;
 use function dot;
+use function is_array;
+use function is_string;
+use function trim;
 
 /** @internal This class should not be used directly, Developers should use the `Config` facade instead. */
 final class Config
@@ -49,6 +52,16 @@ final class Config
 	 */
 	public function isBlank(string $key): bool
 	{
-		return Val::isBlank($this->dot->get($key));
+		$value = $this->dot->get($key);
+
+		if ($value === false || $value === null) {
+			return true;
+		}
+
+		if (is_string($value) && trim($value) === '') {
+			return true;
+		}
+
+		return is_array($value) && count($value) === 0;
 	}
 }

@@ -21,7 +21,6 @@ use Pimple\Psr11\Container;
 use Psr\Container\ContainerInterface;
 use RecursiveDirectoryIterator;
 use SplFileInfo;
-use Syntatis\Utils\Val;
 
 use function dirname;
 use function is_dir;
@@ -29,6 +28,7 @@ use function is_file;
 use function is_string;
 use function is_subclass_of;
 use function method_exists;
+use function trim;
 
 /**
  * Orchastates the WordPress plugin lifecycle and define the required services.
@@ -232,7 +232,11 @@ final class Plugin
 				}
 			}
 
-			if (! isset($config['app']['name']) || Val::isBlank($config['app']['name'])) {
+			if (
+				! isset($config['app']['name']) ||
+				! is_string($config['app']['name']) ||
+				trim($config['app']['name']) === ''
+			) {
 				throw new InvalidArgumentException('The app "name" is required and cannot be empty.');
 			}
 
@@ -242,10 +246,6 @@ final class Plugin
 			/** @var Config $config */
 			$config = $container['config'];
 			$name = $config->get('app.name');
-
-			if (! is_string($name) || Val::isBlank($name)) {
-				throw new InvalidArgumentException('The app "name" is required and cannot be empty.');
-			}
 
 			return new App($name, $config);
 		};
