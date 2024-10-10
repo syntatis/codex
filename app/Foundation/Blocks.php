@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use SplFileInfo;
 
+use function file_exists;
 use function is_dir;
 
 class Blocks
@@ -33,6 +34,10 @@ class Blocks
 
 		foreach ($blocks as $block) {
 			if (! ($block instanceof SplFileInfo) || ! $block->isDir()) {
+				continue;
+			}
+
+			if (! file_exists($block->getRealPath() . '/block.json')) {
 				continue;
 			}
 
