@@ -29,5 +29,6 @@ class BlocksTest extends WPTestCase
 		self::assertTrue(isset($blocks['codex/block-a']));
 		self::assertTrue(isset($blocks['codex/block-b']));
 		self::assertFalse(isset($blocks['codex/block-c']));
+		self::assertFalse(isset($blocks['codex/block-c']));
 	}
 }
