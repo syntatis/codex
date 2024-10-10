@@ -65,9 +65,13 @@ final class Plugin
 		$this->container = new Container($this->pimple);
 	}
 
-	public function setPluginFilePath(string $pluginFilePath): void
+	public function withPluginFilePath(string $pluginFilePath): self
 	{
+		$self = clone $this;
+
 		$this->pluginFilePath = $pluginFilePath;
+
+		return $self;
 	}
 
 	/**
@@ -76,9 +80,13 @@ final class Plugin
 	 * @param array<string> $services
 	 * @phpstan-param array<class-string> $services
 	 */
-	public function addServices(array $services): void
+	public function withServices(array $services): self
 	{
+		$self = clone $this;
+
 		$this->services = $services;
+
+		return $self;
 	}
 
 	public function boot(): void
