@@ -9,9 +9,10 @@ use Codex\Foundation\Hooks\Action;
 use Codex\Foundation\Hooks\Filter;
 use Codex\Foundation\Hooks\Hook;
 use ReflectionClass;
-use Syntatis\Utils\Str;
 
 use function is_callable;
+use function strlen;
+use function strncmp;
 
 /** @internal */
 final class Parser implements Hookable
@@ -86,7 +87,12 @@ final class Parser implements Hookable
 				continue;
 			}
 
-			if ($method->isConstructor() || $method->isDestructor() || Str::startsWith($method->getName(), '__')) {
+			if (
+				$method->isConstructor() ||
+				$method->isDestructor() ||
+				// Starts with __
+				strncmp($method->getName(), '__', strlen('__')) === 0
+			) {
 				continue;
 			}
 
