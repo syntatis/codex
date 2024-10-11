@@ -116,6 +116,8 @@ final class Plugin
 			);
 		}
 
+		/** @var App $app */
+		$app = $this->container->get('app');
 		/** @var Config $config */
 		$config = $this->container->get('config');
 
@@ -137,10 +139,10 @@ final class Plugin
 		if (! $config->isBlank('app.blocks_path')) {
 			/** @var string $blocksPath */
 			$blocksPath = $config->get('app.blocks_path');
-			$blocksPath = wp_normalize_path($blocksPath);
+			$blocksDir = $app->dir($blocksPath);
 
-			if (is_dir($blocksPath)) {
-				$blocks = new Blocks($blocksPath);
+			if (is_dir($blocksDir)) {
+				$blocks = new Blocks($blocksDir);
 
 				/**
 				 * Register the blocks found in the specificed blocks directory.
@@ -214,6 +216,7 @@ final class Plugin
 	{
 		$this->pimple['hook'] = $this->hook;
 		$this->pimple['plugin_file_path'] = $this->pluginFilePath;
+		$this->pimple['plugin_dir_path'] = dirname($this->pluginFilePath);
 		$this->pimple['config'] = static function (PimpleContainer $container): Config {
 			$config = [];
 
@@ -249,14 +252,20 @@ final class Plugin
 		$this->pimple['app'] = static function (PimpleContainer $container): App {
 			/** @var Config $config */
 			$config = $container['config'];
-			/**
-			 * @internal App name has been validated in the Config class.
-			 *
-			 * @var string $name
-			 */
+			/** @var string $pluginFilePath */
+			$pluginFilePath = $container['plugin_file_path'] ?? '';
+			/** @var string $pluginDirPath */
+			$pluginDirPath = $container['plugin_dir_path'] ?? '';
+			/** @var string $name */
 			$name = $config->get('app.name');
 
-			return new App($name, $config);
+			return new App(
+				$name,
+				[
+					'plugin_dir_path' => $pluginDirPath,
+					'plugin_file_path' => $pluginFilePath,
+				],
+			);
 		};
 	}
 }

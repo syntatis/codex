@@ -6,11 +6,12 @@ namespace Codex\Tests\Facades;
 
 use Codex\Contracts\Extendable;
 use Codex\Facades\App;
+use Codex\Facades\Config;
 use Codex\Plugin;
 use Codex\Tests\WPTestCase;
 use Psr\Container\ContainerInterface;
 
-class AppTest extends WPTestCase
+class ConfigTest extends WPTestCase
 {
 	// phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 	public function set_up(): void
@@ -53,7 +54,7 @@ class AppTest extends WPTestCase
 		add_action('admin_init', ['WP_Privacy_Policy_Content', 'text_change_check'], 100);
 	}
 
-	public function testName(): void
+	public function testConfig(): void
 	{
 		$app = new Plugin(
 			new class () implements Extendable {
@@ -70,27 +71,14 @@ class AppTest extends WPTestCase
 		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
 		$app->boot();
 
-		$this->assertSame('wp-test', App::name());
-	}
-
-	public function testDir(): void
-	{
-		$app = new Plugin(
-			new class () implements Extendable {
-				public function getInstances(ContainerInterface $container): iterable
-				{
-					return [];
-				}
-
-				public function init(): void
-				{
-				}
-			},
-		);
-		$app->setPluginFilePath(self::getFixturesPath('/plugin-name.php'));
-		$app->boot();
-
-		$this->assertSame(self::getFixturesPath(), App::dir());
-		$this->assertSame(self::getFixturesPath('/foo'), App::dir('/foo'));
+		self::assertSame('wp-test', Config::get('app.text_domain'));
+		self::assertSame('/dist', Config::get('app.assets_path'));
+		self::assertSame('https://example.org/dist', Config::get('app.assets_url'));
+		self::assertSame('wp_test_', Config::get('app.option_prefix'));
+		self::assertSame('wp_test_', Config::get('app.option_prefix'));
+		self::assertTrue(Config::has('app.option_prefix'));
+		self::assertFalse(Config::has('non-existent-key'));
+		self::assertTrue(Config::isBlank('empty'));
+		self::assertTrue(Config::isBlank('blank'));
 	}
 }
