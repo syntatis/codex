@@ -256,9 +256,11 @@ final class Plugin
 			$pluginFilePath = $container['plugin_file_path'] ?? '';
 			/** @var string $pluginDirPath */
 			$pluginDirPath = $container['plugin_dir_path'] ?? '';
+			/** @var string $name */
+			$name = $config->get('app.name');
 
 			return new App(
-				$config->get('app.name'),
+				$name,
 				[
 					'plugin_dir_path' => $pluginDirPath,
 					'plugin_file_path' => $pluginFilePath,

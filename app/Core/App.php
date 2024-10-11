@@ -19,8 +19,6 @@ final class App
 {
 	private string $name;
 
-	private Config $config;
-
 	/**
 	 * @var array<string,mixed>
 	 * @phpstan-var Props
