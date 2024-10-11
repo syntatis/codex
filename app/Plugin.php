@@ -139,10 +139,10 @@ final class Plugin
 		if (! $config->isBlank('app.blocks_path')) {
 			/** @var string $blocksPath */
 			$blocksPath = $config->get('app.blocks_path');
-			$blocksPath = $app->path($blocksPath);
+			$blocksDir = $app->dir($blocksPath);
 
-			if (is_dir($blocksPath)) {
-				$blocks = new Blocks($blocksPath);
+			if (is_dir($blocksDir)) {
+				$blocks = new Blocks($blocksDir);
 
 				/**
 				 * Register the blocks found in the specificed blocks directory.
