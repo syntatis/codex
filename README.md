@@ -2,8 +2,8 @@
 
 [![ci](https://github.com/syntatis/codex/actions/workflows/ci.yml/badge.svg)](https://github.com/syntatis/codex/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/syntatis/codex/graph/badge.svg?token=9Y9PU6IOA8)](https://codecov.io/gh/syntatis/codex)
 
-> [!CAUTION]
-> This package is currently under active development. It is not recommended for production use.
+> [!NOTE]
+> The project is now in beta and ready for testing. We'd love to hear your input, so feel free to report any issues or suggest enhancements.
 
 A codebase designed to build WordPress extensions with modern PHP practices.
 
