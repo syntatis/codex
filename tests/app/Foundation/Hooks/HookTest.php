@@ -161,6 +161,17 @@ class HookTest extends WPTestCase
 		$this->assertFalse(has_action('admin_bar_init', [$callback, 'init']));
 	}
 
+	public function testRemoveActionClassStaticMethod(): void
+	{
+		$this->hook->addAction('admin_bar_init', [CallbackTest::class, 'run'], 35);
+
+		$this->assertSame(35, has_action('admin_bar_init', [CallbackTest::class, 'run']));
+
+		$this->hook->removeAction('admin_bar_init', 'Codex\Tests\Foundation\Hooks\CallbackTest::run', 35);
+
+		$this->assertFalse(has_action('admin_bar_init', [CallbackTest::class, 'run']));
+	}
+
 	public function testRemoveActionInvalidClassMethod(): void
 	{
 		$callback = new CallbackTest();
@@ -486,5 +497,9 @@ class CallbackTest {
 	public function change(): string
 	{
 		return '';
+	}
+
+	public static function run(): void
+	{
 	}
 }

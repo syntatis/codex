@@ -14,6 +14,7 @@ use function get_class;
 use function gettype;
 use function is_array;
 use function is_callable;
+use function is_object;
 use function is_string;
 use function preg_match;
 use function spl_object_hash;
@@ -271,7 +272,13 @@ final class Hook
 		}
 
 		if (is_array($callback)) {
-			return get_class($callback[0]) . '::' . $callback[1];
+			if (isset($callback[0]) && is_object($callback[0])) {
+				return get_class($callback[0]) . '::' . $callback[1];
+			}
+
+			if (isset($callback[0]) && is_string($callback[0])) {
+				return $callback[0] . '::' . $callback[1];
+			}
 		}
 
 		return spl_object_hash(Closure::fromCallable($callback));
