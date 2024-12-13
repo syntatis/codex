@@ -486,6 +486,46 @@ class HookTest extends WPTestCase
 		$this->assertSame(12, $this->hook->hasFilter('the_content', '#the-content.func'));
 		$this->assertFalse($this->hook->hasFilter('the_content', '#the-content.function'));
 	}
+
+	/**
+	 * @dataProvider dataValidRefVariations
+	 * @group test-here
+	 */
+	public function testValidRefVariations(string $ref): void
+	{
+		$this->hook->addFilter('the_content', static fn () => true, 320, 1, ['id' => $ref]);
+		$this->assertSame(320, $this->hook->hasFilter('the_content', '#' . $ref));
+	}
+
+	public static function dataValidRefVariations(): iterable
+	{
+		yield ['valid-ref'];
+		yield ['valid_ref'];
+		yield ['valid_ref.with.dot'];
+		yield ['valid_ref/with/slash'];
+		yield ['valid_ref\with\backslash'];
+		yield ['0starts_with_number'];
+		yield ['123'];
+		yield ['123.456'];
+	}
+
+	/**
+	 * @dataProvider dataInvalidRefVariations
+	 * @group test-here
+	 */
+	public function testInvalidRefVariations(string $ref): void
+	{
+		$this->expectException(InvalidArgumentException::class);
+
+		$this->hook->addFilter('the_content', static fn () => true, 321, 1, ['id' => $ref]);
+	}
+
+	public static function dataInvalidRefVariations(): iterable
+	{
+		yield ['.invalid'];
+		yield ['invalid with space'];
+		yield ['invalid::with::colon'];
+	}
 }
 
 // phpcs:disable

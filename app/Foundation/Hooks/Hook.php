@@ -251,11 +251,11 @@ final class Hook
 	private function getNamedId(array $options = []): ?string
 	{
 		if (isset($options['id']) && is_string($options['id']) && trim($options['id']) !== '') {
-			preg_match('/^[a-z0-9]([_.-]?[a-z0-9]+)*(\/[a-z0-9](([_.]|-{1,2})?[a-z0-9]+)*)?$/', $options['id'], $matches);
+			preg_match('/^[a-z0-9](?:[_\.\-\/\\\\]?[a-zA-Z0-9])+$/', $options['id'], $matches);
 
 			if (count($matches) === 0) {
 				throw new InvalidArgumentException(
-					'Invalid ref ID format. A ref ID should only contains letters, numbers, hyphens, dots, underscores, and backslashes.',
+					'Invalid ref ID format. A ref ID should only contains letters, numbers, hyphens, dots, underscores, forwardslashes and backslashes.',
 				);
 			}
 
