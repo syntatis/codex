@@ -17,7 +17,7 @@ use function trim;
  */
 final class App
 {
-	/** @phptan-var non-empty-string */
+	/** @phpstan-var non-empty-string */
 	private string $name;
 
 	/**
