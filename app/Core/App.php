@@ -17,6 +17,7 @@ use function trim;
  */
 final class App
 {
+	/** @phptan-var non-empty-string */
 	private string $name;
 
 	/**
@@ -27,6 +28,7 @@ final class App
 
 	/**
 	 * @param array<string,mixed> $props Misc. properties to be set on the app.
+	 * @phpstan-param non-empty-string $name
 	 * @phpstan-param Props $props
 	 *
 	 * @internal description
@@ -37,6 +39,7 @@ final class App
 		$this->props = $props;
 	}
 
+	/** @phpstan-return non-empty-string */
 	public function name(): string
 	{
 		return $this->name;
