@@ -256,7 +256,12 @@ final class Plugin
 			$pluginFilePath = $container['plugin_file_path'] ?? '';
 			/** @var string $pluginDirPath */
 			$pluginDirPath = $container['plugin_dir_path'] ?? '';
-			/** @var string $name */
+			/**
+			 * The app name is required and is ensured to be `non-empty-string` type.
+			 * Otherwise, an exception will be thrown.
+			 *
+			 * @phpstan-var non-empty-string $name
+			 */
 			$name = $config->get('app.name');
 
 			return new App(
