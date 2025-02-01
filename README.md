@@ -15,14 +15,14 @@ This project aims to close the gap by providing functions, classes, and structur
 
 ## Projects
 
-The following is a list of projects that are built on top of **Codex** as the foundation.
+List of projects built on top of **Codex** as their foundation.
 
 - 🧪 👋 [howdy](https://github.com/syntatis/howdy): Build your next modern plugin for WordPress®.
 - 🧪 ✨ [howdy-open-ai](https://github.com/syntatis/howdy-open-ai): Build your next modern plugin for WordPress® with OpenAI integration.
 
 ## Providers
 
-Providers are classes that provide additional services in the service container.
+Additional services for the Codex service container.
 
 - 🧪 🎛 [`codex-settings-provider`](https://github.com/syntatis/codex-settings-provider): Service provider for [WordPress Settings API](https://developer.wordpress.org/plugins/settings/settings-api/)
 
