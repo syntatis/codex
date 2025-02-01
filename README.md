@@ -5,26 +5,26 @@
 > [!NOTE]
 > The project is now in beta and ready for testing. We'd love to hear your input, so feel free to report any issues or suggest enhancements.
 
-A codebase designed to build WordPress extensions with modern PHP practices.
+A codebase designed to build extensions for WordPress® with modern PHP practices.
 
 ## Why?
 
-WordPress is a powerful platform, but while PHP has evolved over the years, WordPress development has largely stayed the same. Modern PHP practices like Autoloading with [Composer](https://getcomposer.org) and Dependency Injection aren't commonly used when building WordPress extensions. It has caused some gaps between WordPress and the rest of the PHP ecosystem.
+WordPress is a powerful platform, but while PHP has evolved over the years, WordPress development has largely stayed the same. Modern PHP practices like Autoloading with [Composer](https://getcomposer.org) and Dependency Injection aren't commonly used when building extensions for WordPress. It has caused some gaps between WordPress and the rest of the PHP ecosystem.
 
-This project aims to close the gap by providing functions, classes, and structure as the foundation to build WordPress extensions with modern PHP techniques.
+This project aims to close the gap by providing functions, classes, and structure as the foundation to build extensions for WordPress with modern PHP techniques.
 
 ## Projects
 
 The following is a list of projects that are built on top of **Codex** as the foundation.
 
-- 🧪 👋 [howdy](https://github.com/syntatis/howdy): A WordPress plugin boilerplate with modern development tools, easier configuration, and an improved folder structure.
-- 🧪 ✨ [howdy-open-ai](https://github.com/syntatis/howdy-open-ai): A WordPress plugin boilerplate with OpenAI PHP client add-in.
+- 🧪 👋 [howdy](https://github.com/syntatis/howdy): Build your next modern plugin for WordPress®.
+- 🧪 ✨ [howdy-open-ai](https://github.com/syntatis/howdy-open-ai): Build your next modern plugin for WordPress® with OpenAI integration.
 
 ## Providers
 
 Providers are classes that provide additional services in the service container.
 
-- 🧪 🎛 [`codex-settings-provider`](https://github.com/syntatis/codex-settings-provider): Service provider for WordPress Settings API
+- 🧪 🎛 [`codex-settings-provider`](https://github.com/syntatis/codex-settings-provider): Service provider for [WordPress Settings API](https://developer.wordpress.org/plugins/settings/settings-api/)
 
 ## Inspiration
 
