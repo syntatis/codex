@@ -4,6 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    labels:
+      - "dependencies"
+      - "ci-cd"
 
   - package-ecosystem: "composer"
     versioning-strategy: increase
@@ -12,6 +15,9 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    labels:
+      - "dependencies"
+      - "composer"
     ignore:
       - dependency-name: "symfony/*"
         versions: [">5.0"]
