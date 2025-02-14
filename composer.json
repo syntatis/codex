@@ -51,7 +51,7 @@
 		"syntatis/coding-standard": "^1.5",
 		"szepeviktor/phpstan-wordpress": "^2.0",
 		"wp-phpunit/wp-phpunit": "^6.7",
-		"yoast/phpunit-polyfills": "^3.1"
+		"yoast/phpunit-polyfills": "^4.0"
 	},
 	"scripts": {
 		"phpcs:fix": "vendor/bin/phpcbf",
