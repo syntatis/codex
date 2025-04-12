@@ -19,7 +19,7 @@
 			"role": "Developer"
 		}
 	],
-	"license": "GPL-3.0",
+	"license": "MIT",
 	"autoload": {
 		"psr-4": {
 			"Codex\\": "app/"
