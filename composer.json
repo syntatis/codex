@@ -46,7 +46,7 @@
 		"phpstan/phpstan-phpunit": "^2.0",
 		"phpstan/phpstan-strict-rules": "^2.0",
 		"phpunit/phpunit": "^9.6",
-		"roots/wordpress": "^6.7",
+		"roots/wordpress": "^6.8",
 		"symfony/var-dumper": "^5.4",
 		"syntatis/coding-standard": "^1.5",
 		"szepeviktor/phpstan-wordpress": "^2.0",
