@@ -56,63 +56,63 @@ final class Hook
 	/**
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
-	 * @param string               $tag          The name of the WordPress action that is being registered.
+	 * @param string               $name         The name of the WordPress action that is being registered.
 	 * @param callable             $callback     The name of the function to be called with Action hook.
 	 * @param int                  $priority     Optional. The priority at which the function should be fired. Default is 10.
 	 * @param int                  $acceptedArgs Optional. The number of arguments that should be passed to the $callback. Default is 1.
 	 * @param array<string, mixed> $options      Optional. Additional options for the action.
 	 */
 	public function addAction(
-		string $tag,
+		string $name,
 		callable $callback,
 		int $priority = 10,
 		int $acceptedArgs = 1,
 		array $options = []
 	): void {
-		add_action($tag, $callback, $priority, $acceptedArgs);
+		add_action($name, $callback, $priority, $acceptedArgs);
 
 		$nativeId = $this->getNativeId($callback);
 		$namedId = $this->getNamedId($options) ?? $nativeId;
 
 		$this->addRef($namedId, $nativeId, ['callback' => $callback]);
 
-		$this->actions = $this->add($this->actions, $tag, $callback, $priority, $acceptedArgs);
+		$this->actions = $this->add($this->actions, $name, $callback, $priority, $acceptedArgs);
 	}
 
 	/**
 	 * Add a new filter to the collection to be registered with WordPress.
 	 *
-	 * @param string               $tag          The name of the WordPress filter that is being registered.
+	 * @param string               $name         The name of the WordPress filter that is being registered.
 	 * @param callable             $callback     The name of the function to be called with Filter hook.
 	 * @param int                  $priority     Optional. The priority at which the function should be fired. Default is 10.
 	 * @param int                  $acceptedArgs Optional. The number of arguments that should be passed to the $callback. Default is 1.
 	 * @param array<string, mixed> $options      Optional. Additional options for the action.
 	 */
 	public function addFilter(
-		string $tag,
+		string $name,
 		callable $callback,
 		int $priority = 10,
 		int $acceptedArgs = 1,
 		array $options = []
 	): void {
-		add_filter($tag, $callback, $priority, $acceptedArgs);
+		add_filter($name, $callback, $priority, $acceptedArgs);
 
 		$nativeId = $this->getNativeId($callback);
 		$namedId = $this->getNamedId($options) ?? $nativeId;
 
 		$this->addRef($namedId, $nativeId, ['callback' => $callback]);
 
-		$this->filters = $this->add($this->filters, $tag, $callback, $priority, $acceptedArgs);
+		$this->filters = $this->add($this->filters, $name, $callback, $priority, $acceptedArgs);
 	}
 
 	/**
 	 * Removes an action callback function from a specified hook.
 	 *
-	 * @param string          $tag      The name of the action hook to remove the callback from.
+	 * @param string          $name     The name of the action hook to remove the callback from.
 	 * @param string|callable $ref      The callback or ref id to remove from the action hook.
 	 * @param int             $priority Optional. The priority of the callback function. Default is 10.
 	 */
-	public function removeAction(string $tag, $ref, int $priority = 10): void
+	public function removeAction(string $name, $ref, int $priority = 10): void
 	{
 		$callback = is_string($ref) ? $this->getCallback($ref) : $ref;
 
@@ -120,17 +120,17 @@ final class Hook
 			return;
 		}
 
-		remove_action($tag, $callback, $priority);
+		remove_action($name, $callback, $priority);
 	}
 
 	/**
 	 * Removes a filter callback function from a specified hook.
 	 *
-	 * @param string          $tag      The name of the filter hook to remove the callback from.
+	 * @param string          $name     The name of the filter hook to remove the callback from.
 	 * @param string|callable $ref      The callback or ref id to remove from the filter hook.
 	 * @param int             $priority Optional. The priority of the callback function. Default is 10.
 	 */
-	public function removeFilter(string $tag, $ref, int $priority = 10): void
+	public function removeFilter(string $name, $ref, int $priority = 10): void
 	{
 		$callback = $this->getCallback($ref);
 
@@ -138,18 +138,18 @@ final class Hook
 			return;
 		}
 
-		remove_filter($tag, $callback, $priority);
+		remove_filter($name, $callback, $priority);
 	}
 
 	/**
 	 * Whether the action hook has the specified callback.
 	 *
-	 * @param string          $tag The name of the action hook to remove the callback from.
-	 * @param string|callable $ref The callback or ref id to remove from the filter hook.
+	 * @param string          $name The name of the action hook to remove the callback from.
+	 * @param string|callable $ref  The callback or ref id to remove from the filter hook.
 	 *
 	 * @return bool|int If registered, it returns the priority of the callback. Otherwise, it returns false.
 	 */
-	public function hasAction(string $tag, $ref)
+	public function hasAction(string $name, $ref)
 	{
 		$callback = $this->getCallback($ref);
 
@@ -157,18 +157,18 @@ final class Hook
 			return false;
 		}
 
-		return has_action($tag, $callback);
+		return has_action($name, $callback);
 	}
 
 	/**
 	 * Whether the filter hook has the specified callback.
 	 *
-	 * @param string          $tag The name of the filter hook to remove the callback from.
-	 * @param string|callable $ref The callback or ref id to remove from the filter hook.
+	 * @param string          $name The name of the filter hook to remove the callback from.
+	 * @param string|callable $ref  The callback or ref id to remove from the filter hook.
 	 *
 	 * @return bool|int If registered, it returns the priority of the callback. Otherwise, it returns false.
 	 */
-	public function hasFilter(string $tag, $ref)
+	public function hasFilter(string $name, $ref)
 	{
 		$callback = $this->getCallback($ref);
 
@@ -176,7 +176,7 @@ final class Hook
 			return false;
 		}
 
-		return has_filter($tag, $callback);
+		return has_filter($name, $callback);
 	}
 
 	/**
@@ -209,19 +209,19 @@ final class Hook
 	 * Add a new hook (action or filter) to the collection.
 	 *
 	 * @param array<array{tag:string,callback:callable,priority:int,accepted_args:int}> $hooks        The current collection of hooks.
-	 * @param string                                                                    $tag          The name of the hook being registered.
+	 * @param string                                                                    $name         The name of the hook being registered.
 	 * @param callable                                                                  $callback     The function to be called when the hook is triggered.
 	 * @param int                                                                       $priority     The priority at which the function should be fired.
 	 * @param int                                                                       $acceptedArgs The number of arguments that should be passed to the callback.
 	 *
 	 * @return array<array{tag:string,callback:callable,priority:int,accepted_args:int}>
 	 */
-	private function add(array $hooks, string $tag, callable $callback, int $priority, int $acceptedArgs): array
+	private function add(array $hooks, string $name, callable $callback, int $priority, int $acceptedArgs): array
 	{
 		$hooks[] = [
 			'accepted_args' => $acceptedArgs,
 			'callback' => $callback,
-			'tag' => $tag,
+			'tag' => $name,
 			'priority' => $priority,
 		];
 
