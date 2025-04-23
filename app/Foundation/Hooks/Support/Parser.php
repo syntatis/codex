@@ -96,12 +96,6 @@ final class Parser implements Hookable
 				continue;
 			}
 
-			$callback = [$this->obj, $method->getName()];
-
-			if (! is_callable($callback)) {
-				continue;
-			}
-
 			$actions = $method->getAttributes(Action::class);
 			$filters = $method->getAttributes(Filter::class);
 
@@ -110,7 +104,7 @@ final class Parser implements Hookable
 
 				$this->hook->addAction(
 					$instance->getName(),
-					$callback,
+					[$this->obj, $method->getName()],
 					$instance->getPriority(),
 					$instance->getAcceptedArgs(),
 					$instance->getOptions(),
@@ -122,7 +116,7 @@ final class Parser implements Hookable
 
 				$this->hook->addFilter(
 					$instance->getName(),
-					$callback,
+					[$this->obj, $method->getName()],
 					$instance->getPriority(),
 					$instance->getAcceptedArgs(),
 					$instance->getOptions(),
