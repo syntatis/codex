@@ -104,6 +104,7 @@ final class Parser implements Hookable
 
 				$this->hook->addAction(
 					$instance->getName(),
+					// @phpstan-ignore-next-line - $method->getName() is callable
 					[$this->obj, $method->getName()],
 					$instance->getPriority(),
 					$instance->getAcceptedArgs(),
@@ -116,6 +117,7 @@ final class Parser implements Hookable
 
 				$this->hook->addFilter(
 					$instance->getName(),
+					// @phpstan-ignore-next-line - $method->getName() is callable
 					[$this->obj, $method->getName()],
 					$instance->getPriority(),
 					$instance->getAcceptedArgs(),
