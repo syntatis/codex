@@ -15,6 +15,10 @@ on:
       - "phpunit.xml.dist"
     types: [ready_for_review, synchronize, opened]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   typo:
     runs-on: ubuntu-latest
