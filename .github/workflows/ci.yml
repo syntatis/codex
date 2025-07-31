@@ -1,67 +1,76 @@
-name: ci
+name: CI
 
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened, reopened, synchronize]
     branches:
       - main
     paths:
       - ".github/workflows/ci.yml"
       - "**.php"
       - "composer.json"
+      - "composer.lock"
       - "phpcs.xml.dist"
       - "phpstan.neon.dist"
       - "phpunit.xml.dist"
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/ci.yml"
-      - "**.php"
-      - "composer.json"
-      - "phpcs.xml.dist"
-      - "phpstan.neon.dist"
-      - "phpunit.xml.dist"
+    types: [ready_for_review, synchronize, opened]
 
 jobs:
-  lint:
+  typo:
     runs-on: ubuntu-latest
+    name: Typo
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - name: Check spelling
+        uses: crate-ci/typos@v1.34.0
 
-      - name: Setup Composer cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: php-7.4-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: php-7.4-composer-
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 7.4
-          tools: composer:v2
 
-      - name: Install dependencies
-        run: composer install --prefer-dist
+      - name: Install PHP dependencies
+        uses: ramsey/composer-install@v3
 
       - name: Check PSR-4 mapping
         run: composer dump-autoload --dev --optimize --strict-psr
 
-      - name: Lint codes
-        run: composer phpcs
+      - name: Check code style
+        run: composer lint
+
+  analyze:
+    runs-on: ubuntu-latest
+    name: Analyze
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+
+      - name: Install PHP dependencies
+        uses: ramsey/composer-install@v3
+
+      - name: Analyze source code
+        run: composer analyze
 
   test:
     runs-on: ubuntu-latest
-    if: ${{ success() }}
-    needs: lint
+    needs: [typo, lint, analyze]
     env:
       WP_DB_TEST_NAME: wp_test
       WP_DB_TEST_PASS: wp_test
@@ -71,12 +80,12 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
-        wp: ['5.*', '6.*']
+        php-version: ["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]
+        wp-version: ["5.*", "6.*"]
 
     services:
       database:
-        image: 'mariadb:10.11.5'
+        image: "mariadb:10.11.5"
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: ${{ env.WP_DB_TEST_NAME }}
@@ -100,9 +109,9 @@ jobs:
         id: php-ext-cache
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: ${{ matrix.php }}
+          php-version: ${{ matrix.php-version }}
           extensions: ${{ env.PHP_EXTENSIONS }}
-          key: php-${{ matrix.php }}-ext
+          key: php-${{ matrix.php-version }}-ext
 
       - name: Setup PHP extensions cache
         uses: actions/cache@v4
@@ -111,36 +120,27 @@ jobs:
           key: ${{ steps.php-ext-cache.outputs.key }}
           restore-keys: ${{ steps.php-ext-cache.outputs.key }}
 
-      - name: Setup Composer cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: php-${{ matrix.php }}-composer-
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: ${{ matrix.php-version }}
           extensions: ${{ env.PHP_EXTENSIONS }}
-          tools: composer:v2
 
-      - name: Install dependencies
-        run: |
-          composer require "wp-phpunit/wp-phpunit:${{ matrix.wp }}" "roots/wordpress:${{ matrix.wp }}" --no-interaction --no-update --dev
-          composer install --prefer-dist
+      - name: Require updated dependencies
+        run: composer require "wp-phpunit/wp-phpunit:${{ matrix.wp-version }}" "roots/wordpress:${{ matrix.wp-version }}" --no-interaction --no-update --dev
+
+      - name: Install PHP dependencies
+        uses: ramsey/composer-install@v3
 
       - name: Run test
-        continue-on-error: ${{ matrix.php == '8.4' }}
-        run: |
-          composer phpstan
-          vendor/bin/phpunit --coverage-clover coverage.xml
+        continue-on-error: ${{ matrix.php-version == '8.4' }}
+        run: vendor/bin/phpunit --coverage-clover coverage.xml
         env:
           WP_DB_TEST_HOST: 127.0.0.1:${{ job.services.database.ports['3306'] }}
           WP_ENVIRONMENT_TYPE: development
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.php != '8.4' }}
+        if: ${{ matrix.php-version != '8.4' }}
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
