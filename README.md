@@ -1,6 +1,7 @@
 # 🪵 codex
 
-[![ci](https://github.com/syntatis/codex/actions/workflows/ci.yml/badge.svg)](https://github.com/syntatis/codex/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/syntatis/codex/graph/badge.svg?token=9Y9PU6IOA8)](https://codecov.io/gh/syntatis/codex)
+[![ci](https://github.com/syntatis/codex/actions/workflows/ci.yml/badge.svg)](https://github.com/syntatis/codex/actions/workflows/ci.yml) 
+[![codecov](https://codecov.io/gh/syntatis/codex/graph/badge.svg?token=9Y9PU6IOA8)](https://codecov.io/gh/syntatis/codex)
 ![Packagist Dependency Version](https://img.shields.io/packagist/dependency-v/syntatis/codex/php?color=7a86b8)
 
 A codebase designed to build extensions for WordPress® with modern PHP practices.

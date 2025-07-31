@@ -1,0 +1,38 @@
+services:
+
+  wp:
+    image: ghcr.io/syntatis/php:${PHP_VERSION:-7.4}-fpm
+    restart: on-failure
+    depends_on:
+      - db-test
+    volumes:
+      - ./:/var/www/work
+      - ./.devcontainer/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - vscode_server_volume:/root/.vscode-server
+    environment:
+      SITE_ADMIN_EMAIL: ${SITE_ADMIN_EMAIL:-admin@syntatis.net}
+      SITE_ADMIN_PASS: ${SITE_ADMIN_PASS:-admin}
+      SITE_ADMIN_USER: ${SITE_ADMIN_USER:-admin}
+      SITE_HOST: ${SITE_HOST:-localhost}
+      SITE_PORT: ${SITE_PORT:-8000}
+      SITE_TITLE: ${SITE_TITLE:-Codex}
+
+      # WordPress test installation variables in Docker
+      WP_DB_TEST_HOST: ${DB_TEST_HOST:-db_test}
+      WP_DB_TEST_NAME: ${DB_TEST_NAME:-wp_test}
+      WP_DB_TEST_PASS: ${DB_TEST_PASS:-wp_test}
+      WP_DB_TEST_USER: ${DB_TEST_USER:-wp_test}
+
+  db-test:
+    image: mariadb:10.11.6
+    volumes:
+      - db_test_volume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_TEST_ROOT_PASS:-root}
+      MYSQL_DATABASE: ${DB_TEST_NAME:-wp_test}
+      MYSQL_USER: ${DB_TEST_USER:-wp_test}
+      MYSQL_PASSWORD: ${DB_TEST_PASS:-wp_test}
+
+volumes:
+  db_test_volume:
+  vscode_server_volume:

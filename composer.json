@@ -54,16 +54,11 @@
 		"yoast/phpunit-polyfills": "^4.0"
 	},
 	"scripts": {
-		"phpcs:fix": "vendor/bin/phpcbf",
-		"phpcs": "vendor/bin/phpcs",
-		"phpstan": "vendor/bin/phpstan --memory-limit=512M",
-		"phpunit:coverage": "vendor/bin/phpunit",
-		"phpunit": "vendor/bin/phpunit --no-coverage",
-		"test": [
-			"@phpcs",
-			"@phpstan",
-			"@phpunit"
-		]
+		"analyze": "phpstan --memory-limit=512M",
+		"format": "phpcbf",
+		"lint": "phpcs",
+		"test": "phpunit --no-coverage",
+		"test:coverage": "phpunit"
 	},
 	"config": {
 		"sort-packages": true,
@@ -76,5 +71,8 @@
 		}
 	},
 	"prefer-stable": true,
-	"minimum-stability": "stable"
+	"minimum-stability": "stable",
+	"non-feature-branches": [
+		"dependabot/*"
+	]
 }
