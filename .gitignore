@@ -6,33 +6,38 @@ Thumbs.db
 # Logs and databases #
 ######################
 *.sql
+*.log
+
+# Caches #
+##########
+*.cache
 
 # Compiled source #
 ###################
-*.tar.gz
+*.tar*
 *.zip
+dist*
+build*
+@*
 
-# Graphics #
-############
-*.psd
-
-# Dependency #
-##########################
-node_modules/
-vendor/
+# Dependencies #
+################
+vendor*
 composer.lock
 
-# Tests #
-#############
-artifacts/
-phpunit.xml
-coverage.xml
-
-# Temporary #
-#############
-tmp/
-
-# WordPress #
-###########
-wp-cli.local.yml
+# Temporary files #
+###################
+tmp
 wordpress/
+
+# Environment files #
+######################
+.env
+
+# Private Configs #
+######################
+phpcs.xml
+phpstan.xml
+phpunit.xml
+*.override.xml
+wp-cli.local.yml
