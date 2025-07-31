@@ -19,7 +19,7 @@ class AppTest extends WPTestCase
 	{
 		yield 'foo' => ['foo', 'foo'];
 
-		// The class does not check for empty string, it should be validated befor
+		// The class does not check for empty string, it should be validated before
 		// being passed to the method.
 		yield 'empty' => ['', ''];
 	}
@@ -41,7 +41,7 @@ class AppTest extends WPTestCase
 		yield 'foo' => ['foo', 'foo'];
 		yield '/foo' => ['/foo', '/foo'];
 
-		// The class does not check for empty string, it should be validated befor
+		// The class does not check for empty string, it should be validated before
 		// being passed to the method.
 		yield 'empty' => ['', ''];
 	}

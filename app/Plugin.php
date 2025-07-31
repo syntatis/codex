@@ -145,7 +145,7 @@ final class Plugin
 				$blocks = new Blocks($blocksDir);
 
 				/**
-				 * Register the blocks found in the specificed blocks directory.
+				 * Register the blocks found in the specified blocks directory.
 				 */
 				$this->hook->addAction('init', [$blocks, 'register'], 10, 1, ['id' => 'blocks-register']);
 			}

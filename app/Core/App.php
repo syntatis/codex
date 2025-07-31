@@ -51,7 +51,7 @@ final class App
 	 * @param string $path The absolute path to a file or directory within the
 	 *                     plugin, added with leading slash e.g. `/dist`.
 	 *
-	 * @return string The absolute directory path to the file or directory, withtout the trailingslash
+	 * @return string The absolute directory path to the file or directory, without the trailingslash
 	 *                e.g. `/wp-content/plugins/plugin-name/dist`.
 	 */
 	public function dir(string $path = ''): string
