@@ -130,7 +130,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           extensions: ${{ env.PHP_EXTENSIONS }}
 
-      - name: Require updated dependencies
+      - name: Require PHP dependencies
         run: composer require "wp-phpunit/wp-phpunit:${{ matrix.wp-version }}" "roots/wordpress:${{ matrix.wp-version }}" --no-interaction --no-update --dev
 
       - name: Install PHP dependencies
