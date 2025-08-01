@@ -4,6 +4,9 @@
 [![codecov](https://codecov.io/gh/syntatis/codex/graph/badge.svg?token=9Y9PU6IOA8)](https://codecov.io/gh/syntatis/codex)
 ![Packagist Dependency Version](https://img.shields.io/packagist/dependency-v/syntatis/codex/php?color=7a86b8)
 
+> [!CAUTION]
+> This project is still in development and currently tagged as `v0.*`, which means it's not stable yet and may include breaking changes between versions. I keep working toward a stable release, but until then, things may change as we improve the project. Thanks for your interest and feel free to explore, test, or contribute!
+
 A codebase designed to build extensions for WordPress® with modern PHP practices.
 
 ## Why?
