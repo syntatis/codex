@@ -7,26 +7,15 @@
 > [!CAUTION]
 > This project is still in development and currently tagged as `v0.*`, which means it's not stable yet and may include breaking changes between versions. I keep working toward a stable release, but until then, things may change as we improve the project. Thanks for your interest and feel free to explore, test, or contribute!
 
-A codebase designed to build extensions for WordPress® with modern PHP practices.
-
 ## Why?
 
 WordPress is a powerful platform, but while PHP has evolved over the years, WordPress development has largely stayed the same. Modern PHP practices like Autoloading with [Composer](https://getcomposer.org) and Dependency Injection aren't commonly used when building extensions for WordPress. It has caused some gaps between WordPress and the rest of the PHP ecosystem.
 
-This project aims to close the gap by providing functions, classes, and structure as the foundation to build extensions for WordPress with modern PHP techniques.
-
-## Projects
-
-List of projects built on top of **Codex** as their foundation.
-
-- 🧪 👋 [howdy](https://github.com/syntatis/howdy): Build your next modern plugin for WordPress®.
-- 🧪 ✨ [howdy-open-ai](https://github.com/syntatis/howdy-open-ai): Build your next modern plugin for WordPress® with OpenAI integration.
+This project aims to close the gap by providing functions, classes, and structure as the foundation to build extensions for WordPress with a slightly modern PHP approach.
 
 ## Providers
 
-Additional services for the Codex service container.
-
-- 🧪 🎛 [`codex-settings-provider`](https://github.com/syntatis/codex-settings-provider): Service provider for [WordPress Settings API](https://developer.wordpress.org/plugins/settings/settings-api/)
+* 🧪 🎛 [`codex-settings-provider`](https://github.com/syntatis/codex-settings-provider): [WordPress® Settings API](https://developer.wordpress.org/plugins/settings/settings-api/) service provider
 
 ## Inspiration
 

@@ -1,6 +1,6 @@
 {
 	"name": "syntatis/codex",
-	"description": "The extension codebase for WordPress®",
+	"description": "Helpers, facades, and service container for WordPress® extensions",
 	"keywords": [
 		"wordpress",
 		"helpers",
