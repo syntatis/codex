@@ -138,14 +138,13 @@ jobs:
         uses: ramsey/composer-install@v3
 
       - name: Run test
-        continue-on-error: ${{ matrix.php-version == '8.4' }}
         run: vendor/bin/phpunit --coverage-clover coverage.xml
         env:
           WP_DB_TEST_HOST: 127.0.0.1:${{ job.services.database.ports['3306'] }}
           WP_ENVIRONMENT_TYPE: development
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.php-version != '8.4' }}
+        if: ${{ success() && matrix.php-version == '8.4' && matrix.wp-version == '6.*' }}
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
