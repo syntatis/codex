@@ -42,7 +42,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: "7.4"
 
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v3
@@ -64,7 +64,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: "7.4"
 
       - name: Install PHP dependencies
         uses: ramsey/composer-install@v3
@@ -103,12 +103,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Setup PHP extensions cache environment
         id: php-ext-cache
@@ -144,7 +138,7 @@ jobs:
           WP_ENVIRONMENT_TYPE: development
 
       - name: Upload coverage to Codecov
-        if: ${{ success() && matrix.php-version == '8.4' && matrix.wp-version == '6.*' }}
+        if: ${{ matrix.php-version == '8.4' && matrix.wp-version == '6.*' }}
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
