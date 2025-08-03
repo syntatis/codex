@@ -1,7 +1,7 @@
 services:
 
   wp:
-    image: ghcr.io/syntatis/php:${PHP_VERSION:-7.4}-fpm
+    image: ghcr.io/syntatis/wp:php${PHP_VERSION:-7.4}-fpm
     restart: on-failure
     depends_on:
       - db-test
