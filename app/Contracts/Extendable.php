@@ -11,7 +11,7 @@ interface Extendable
 	/**
 	 * Provide the plugin's feature to instantiate.
 	 *
-	 * @return iterable<object>
+	 * @return iterable<object|null>
 	 */
 	public function getInstances(ContainerInterface $container): iterable;
 }
