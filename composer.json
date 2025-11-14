@@ -36,7 +36,7 @@
 	"require": {
 		"php": "^7.4 || ^8.0",
 		"adbario/php-dot-notation": "^3.3",
-		"pimple/pimple": "^3.5"
+		"pimple/pimple": "^3.6"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.1",
