@@ -50,7 +50,7 @@
 		"symfony/var-dumper": "^5.4",
 		"syntatis/coding-standard": "^2.0",
 		"szepeviktor/phpstan-wordpress": "^2.0",
-		"wp-phpunit/wp-phpunit": "^6.8",
+		"wp-phpunit/wp-phpunit": "^7.0",
 		"yoast/phpunit-polyfills": "^4.0"
 	},
 	"scripts": {
