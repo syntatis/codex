@@ -272,13 +272,11 @@ final class Hook
 		}
 
 		if (is_array($callback)) {
-			if (isset($callback[0]) && is_object($callback[0])) {
+			if (is_object($callback[0])) {
 				return get_class($callback[0]) . '::' . $callback[1];
 			}
 
-			if (isset($callback[0]) && is_string($callback[0])) {
-				return $callback[0] . '::' . $callback[1];
-			}
+			return $callback[0] . '::' . $callback[1];
 		}
 
 		return spl_object_hash(Closure::fromCallable($callback));
