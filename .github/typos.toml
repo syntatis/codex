@@ -1,0 +1,2 @@
+[files]
+extend-exclude = ["tests/phpunit/wp-tests-config.php"]
