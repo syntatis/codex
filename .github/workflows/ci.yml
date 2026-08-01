@@ -45,7 +45,7 @@ jobs:
           php-version: "7.4"
 
       - name: Install PHP dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Check PSR-4 mapping
         run: composer dump-autoload --dev --optimize --strict-psr
@@ -67,7 +67,7 @@ jobs:
           php-version: "7.4"
 
       - name: Install PHP dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Analyze source code
         run: composer analyze
@@ -129,7 +129,7 @@ jobs:
         run: composer require "wp-phpunit/wp-phpunit:${{ matrix.wp-version }}" "roots/wordpress:${{ matrix.wp-version }}" --no-interaction --no-update --dev
 
       - name: Install PHP dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Run test
         run: vendor/bin/phpunit --coverage-clover coverage.xml
