@@ -43,7 +43,7 @@
 		"phpcompatibility/php-compatibility": "^9.3",
 		"phpstan/extension-installer": "^1.4",
 		"phpstan/phpstan": "^2.2",
-		"phpstan/phpstan-phpunit": "^2.0",
+		"phpstan/phpstan-phpunit": "^2.1",
 		"phpstan/phpstan-strict-rules": "^2.0",
 		"phpunit/phpunit": "^9.6",
 		"roots/wordpress": "^7.0",
